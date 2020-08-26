@@ -1,0 +1,6 @@
+name: drupal-gatsby-poc
+recipe: pantheon
+config:
+  framework: drupal8
+  site: drupal-gatsby-poc
+  id: 45e9c64e-ab92-4a5e-8fa8-e0d2aaaa09fc
