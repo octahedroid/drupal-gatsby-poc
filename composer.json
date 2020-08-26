@@ -93,6 +93,7 @@
             "DrupalProject\\composer\\ScriptHandler::createRequiredFiles"
         ]
     },
+
     "extra": {
         "installer-paths": {
             "web/core": ["type:drupal-core"],
