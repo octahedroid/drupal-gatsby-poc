@@ -20,7 +20,28 @@
         "cweagans/composer-patches": "^1.0",
         "drush-ops/behat-drush-endpoint": "^9.3",
         "rvtraveller/qs-composer-installer": "^1.1",
-        "zaporylie/composer-drupal-optimizations": "^1.0"
+        "zaporylie/composer-drupal-optimizations": "^1.0",
+        "drupal/admin_toolbar": "^2.0",
+        "drupal/auditfiles": "^2.2",
+        "drupal/build_hooks": "^2.2",
+        "drupal/console": "^1.9",
+        "drupal/entity_usage": "^2.0@beta",
+        "drupal/field_group": "^3.1",
+        "drupal/gin": "^3.0@alpha",
+        "drupal/gin_login": "^1.0@RC",
+        "drupal/gin_toolbar": "^1.0@beta",
+        "drupal/graphql": "^3.0",
+        "drupal/graphql_metatag": "1.x-dev",
+        "drupal/graphql_views": "^1.0",
+        "drupal/inline_entity_form": "^1.0@RC",
+        "drupal/metatag": "~1.12.0",
+        "drupal/paragraphs": "^1.10",
+        "drupal/paragraphs_edit": "^2.0@alpha",
+        "drupal/pathauto": "^1.6",
+        "drupal/redirect": "^1.6",
+        "drupal/simple_oauth": "^4.3",
+        "drupal/site_settings": "^1.18",
+        "drupal/subpathauto": "^1.0"
     },
     "require-dev": {
         "behat/behat": "^3.1",
@@ -72,6 +93,7 @@
             "DrupalProject\\composer\\ScriptHandler::createRequiredFiles"
         ]
     },
+
     "extra": {
         "installer-paths": {
             "web/core": ["type:drupal-core"],
@@ -81,6 +103,11 @@
             "web/themes/contrib/{$name}": ["type:drupal-theme"],
             "drush/Commands/contrib/{$name}": ["type:drupal-drush"],
             "web/private/scripts/quicksilver/{$name}/": ["type:quicksilver-script"]
+        },
+        "patches": {
+            "drupal/simple_oauth": {
+                "Allow bypassing permissions check on public/private key files": "https://www.drupal.org/files/issues/2020-07-09/3021054-13-bypass_permissions.patch"
+            }
         },
         "build-env": {
             "install-cms": [
@@ -97,7 +124,7 @@
             },
             "file-mapping": {
                 "[project-root]/.editorconfig": false
-            }            
+            }
         }
     },
     "config": {
