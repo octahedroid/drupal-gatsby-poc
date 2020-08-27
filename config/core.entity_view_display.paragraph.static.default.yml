@@ -1,0 +1,22 @@
+uuid: 7ac596a1-b872-4539-a71f-bcf29a2d71f2
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.static.field_component
+    - paragraphs.paragraphs_type.static
+  module:
+    - options
+id: paragraph.static.default
+targetEntityType: paragraph
+bundle: static
+mode: default
+content:
+  field_component:
+    weight: 0
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: list_default
+    region: content
+hidden: {  }

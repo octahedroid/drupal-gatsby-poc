@@ -1,0 +1,15 @@
+uuid: 8b0800e4-e8f1-4894-8bc8-66878b4c8916
+langcode: en
+status: true
+dependencies:
+  module:
+    - paragraphs_library
+third_party_settings:
+  paragraphs_library:
+    allow_library_conversion: true
+id: hero_cta
+label: 'Hero Cta'
+icon_uuid: null
+icon_default: null
+description: ''
+behavior_plugins: {  }

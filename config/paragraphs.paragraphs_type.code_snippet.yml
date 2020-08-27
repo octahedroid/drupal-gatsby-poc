@@ -1,0 +1,10 @@
+uuid: f4eddbc2-c656-4f90-8bfc-a9a6d7564f84
+langcode: en
+status: true
+dependencies: {  }
+id: code_snippet
+label: 'Code Snippet'
+icon_uuid: null
+icon_default: null
+description: ''
+behavior_plugins: {  }

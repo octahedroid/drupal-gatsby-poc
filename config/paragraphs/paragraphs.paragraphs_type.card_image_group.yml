@@ -1,0 +1,8 @@
+langcode: en
+status: true
+dependencies: {  }
+id: card_image_group
+label: 'Card Image Group'
+icon_uuid: null
+description: ''
+behavior_plugins: {  }

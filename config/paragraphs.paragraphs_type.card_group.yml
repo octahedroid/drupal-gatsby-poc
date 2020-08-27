@@ -1,0 +1,15 @@
+uuid: 1ab63a96-fd59-4a95-aa71-5de5bf51db24
+langcode: en
+status: true
+dependencies:
+  module:
+    - paragraphs_library
+third_party_settings:
+  paragraphs_library:
+    allow_library_conversion: true
+id: card_group
+label: 'Card Group'
+icon_uuid: null
+icon_default: null
+description: ''
+behavior_plugins: {  }

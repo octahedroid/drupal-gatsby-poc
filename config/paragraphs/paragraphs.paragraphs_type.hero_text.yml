@@ -1,0 +1,8 @@
+langcode: en
+status: true
+dependencies: {  }
+id: hero_text
+label: 'Hero Text'
+icon_uuid: null
+description: ''
+behavior_plugins: {  }

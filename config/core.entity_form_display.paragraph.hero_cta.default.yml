@@ -1,0 +1,62 @@
+uuid: bc237176-6bb9-4118-a151-ce18f872cb27
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.hero_cta.field_image
+    - field.field.paragraph.hero_cta.field_intro
+    - field.field.paragraph.hero_cta.field_link
+    - field.field.paragraph.hero_cta.field_text
+    - field.field.paragraph.hero_cta.field_title
+    - paragraphs.paragraphs_type.hero_cta
+  module:
+    - link
+    - media_library
+    - text
+id: paragraph.hero_cta.default
+targetEntityType: paragraph
+bundle: hero_cta
+mode: default
+content:
+  field_image:
+    type: media_library_widget
+    weight: 4
+    settings:
+      media_types: {  }
+    third_party_settings: {  }
+    region: content
+  field_intro:
+    weight: 0
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+  field_link:
+    weight: 3
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
+    third_party_settings: {  }
+    type: link_default
+    region: content
+  field_text:
+    weight: 2
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    type: text_textarea
+    region: content
+  field_title:
+    weight: 1
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+hidden:
+  created: true
+  status: true

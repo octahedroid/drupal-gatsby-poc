@@ -1,0 +1,30 @@
+uuid: c6ea45b7-6976-404a-a891-2b38944f8a6f
+langcode: en
+status: true
+dependencies:
+  module:
+    - options
+    - paragraphs
+id: paragraph.field_component
+field_name: field_component
+entity_type: paragraph
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: BlogTeaserList
+      label: BlogTeaserList
+    -
+      value: Contact
+      label: Contact
+    -
+      value: Events
+      label: Events
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

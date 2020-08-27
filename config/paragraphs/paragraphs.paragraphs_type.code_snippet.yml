@@ -1,0 +1,8 @@
+langcode: en
+status: true
+dependencies: {  }
+id: code_snippet
+label: 'Code Snippet'
+icon_uuid: null
+description: ''
+behavior_plugins: {  }

@@ -1,0 +1,21 @@
+uuid: 6376bae7-ddc5-4ca2-ad22-825436f3ef6e
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_text
+    - paragraphs.paragraphs_type.hero_cta
+  module:
+    - text
+id: paragraph.hero_cta.field_text
+field_name: field_text
+entity_type: paragraph
+bundle: hero_cta
+label: Text
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: text_long

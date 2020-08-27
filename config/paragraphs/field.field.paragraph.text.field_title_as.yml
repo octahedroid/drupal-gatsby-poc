@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_title_as
+    - paragraphs.paragraphs_type.text
+  module:
+    - options
+id: paragraph.text.field_title_as
+field_name: field_title_as
+entity_type: paragraph
+bundle: text
+label: 'Title As'
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: h4
+default_value_callback: ''
+settings: {  }
+field_type: list_string
