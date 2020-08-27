@@ -1,0 +1,20 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_columns
+    - paragraphs.paragraphs_type.card_image_group
+  module:
+    - options
+id: paragraph.card_image_group.field_columns
+field_name: field_columns
+entity_type: paragraph
+bundle: card_image_group
+label: Columns
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_integer

@@ -1,0 +1,23 @@
+uuid: 3b0e245c-4d0b-489e-bea5-7a14bda8e9fa
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_theme
+    - paragraphs.paragraphs_type.code_snippet
+  module:
+    - options
+id: paragraph.code_snippet.field_theme
+field_name: field_theme
+entity_type: paragraph
+bundle: code_snippet
+label: Theme
+description: ''
+required: true
+translatable: false
+default_value:
+  -
+    value: atomOneLight
+default_value_callback: ''
+settings: {  }
+field_type: list_string

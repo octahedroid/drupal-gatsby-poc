@@ -1,0 +1,23 @@
+uuid: 8e01e873-02a0-43c7-9516-629f0896b40e
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_dark
+    - paragraphs.paragraphs_type.cta
+id: paragraph.cta.field_dark
+field_name: field_dark
+entity_type: paragraph
+bundle: cta
+label: Dark
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

@@ -1,0 +1,20 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_component
+    - paragraphs.paragraphs_type.static
+  module:
+    - options
+id: paragraph.static.field_component
+field_name: field_component
+entity_type: paragraph
+bundle: static
+label: Component
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_string

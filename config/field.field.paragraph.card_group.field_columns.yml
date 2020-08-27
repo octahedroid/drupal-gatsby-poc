@@ -1,0 +1,21 @@
+uuid: e3ba12f6-b2a8-4294-a037-964506a8db40
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_columns
+    - paragraphs.paragraphs_type.card_group
+  module:
+    - options
+id: paragraph.card_group.field_columns
+field_name: field_columns
+entity_type: paragraph
+bundle: card_group
+label: Columns
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_integer
