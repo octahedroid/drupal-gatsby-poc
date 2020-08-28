@@ -9,7 +9,7 @@ workflows:
             - slack/notify:
                 channel: gatsby-theme
                 color: '#2cd124'
-                message: 'Changes of ${TERMINUS_ENV} available on https://${TERMINUS_ENV}-${TERMINUS_SITE}.pantheonsite.io :eyes:'
+                message: 'Changes of ${CIRCLE_PULL_REQUEST} available on https://${TERMINUS_ENV}-${TERMINUS_SITE}.pantheonsite.io'
           filters:
               branches:
                 ignore:
