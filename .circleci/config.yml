@@ -36,7 +36,7 @@ workflows:
             - drupal-post-steps
             - slack/notify:
                 channel: gatsby-theme
-                color: '#fc7703'
+                color: '#42cef5'
                 message: 'Changes of ${CIRCLE_PULL_REQUEST} available on ${MULTIDEV_SITE_URL}'
             - slack/status:
                 fail_only: true
