@@ -1,0 +1,91 @@
+- entity: "node"
+  type: "page"
+  title: "Home"
+  uid: 1
+  status: 1
+  path:
+    - alias: '/home'
+      pathauto: false
+  field_content:
+    - entity: 'paragraph'
+      type: 'hero_cta'
+      field_intro:
+        - value: 'Interested in knowing more about JAMStack?'
+      field_title:
+        - value: 'Looking for fast and secure sites and applications?'
+      field_text:
+        - value: >
+            <p>Let us help you maximize your project with the latest and modern technologies.</p>
+          format: 'basic_html'
+      field_link:
+        - uri: 'internal:/contact'
+          title: 'Work with us!'
+      field_image:
+        - entity: 'media'
+          bundle: 'image'
+          field_media_image:
+            - '#process':
+                callback: 'file'
+                args:
+                  - 'image'
+                  - filename: 'home_cta.png'
+    - entity: 'paragraph'
+      type: 'card_group'
+      field_title:
+        - value: 'Our fields of specialty'
+      field_columns:
+        - value: 2
+      field_centered:
+        - value: 1
+      field_cta:
+        - value: 0
+      field_cards:
+        - entity: 'paragraph'
+          type: 'card'
+          field_title: 'Content Management System'
+          field_image:
+            - entity: 'media'
+              bundle: 'image'
+              field_media_image:
+                - '#process':
+                    callback: 'file'
+                    args:
+                      - 'image'
+                      - filename: 'fixing-website.png'
+          field_link:
+            - uri: 'internal:/cms'
+              title: 'CMS'
+        - entity: 'paragraph'
+          type: 'card'
+          field_title: 'JAMstack'
+          field_image:
+            - entity: 'media'
+              bundle: 'image'
+              field_media_image:
+                - '#process':
+                    callback: 'file'
+                    args:
+                      - 'image'
+                      - filename: 'editing-shapes.png'
+          field_link:
+            - uri: 'internal:/jamstack'
+              title: 'JAMstack'
+    - entity: 'paragraph'
+      type: 'from_library'
+      field_reusable_paragraph:
+        - entity: 'paragraphs_library_item'
+          label: 'CTA We are'
+          uid: 1
+          status: 1
+          paragraphs:
+            - entity: 'paragraph'
+              type: 'cta'
+              field_title:
+                - value: 'We are a digital agency building great experiences'
+              field_text:
+                - value: >
+                    <p>We are a team of people who share the vision of modern websites and applications, that are fast, secure, reliable, and easy to maintain.</p>
+                  format: 'basic_html'
+              field_link:
+                - uri: 'internal:/contact'
+                  title: 'Work with us!'
