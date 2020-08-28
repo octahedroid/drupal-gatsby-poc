@@ -9,7 +9,6 @@ jobs:
           color: '#42e2f4'
           mentions: 'USERID1,USERID2,'
           message: New multienv has ben created on https://pr-${CIRCLE_PR_NUMBER}-${TERMINUS_SITE}.pantheonsite.io
-          webhook: webhook
 
 workflows:
   version: 2
