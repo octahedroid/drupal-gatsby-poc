@@ -11,4 +11,7 @@ workflows:
     after:
       - type: webphp
         description: Import configuration from .yml files
-        script: private/scripts/drush_config_import/drush_config_import.php
+        script: private/scripts/drush_config_import.php
+      - type: webphp
+        description: Post to Slack after deploy
+        script: private/scripts/slack_notification.php
