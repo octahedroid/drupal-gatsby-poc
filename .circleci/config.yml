@@ -2,7 +2,7 @@ version: 2.1
 jobs:
   notify:
     docker:
-      - image: alpine
+      - image: cibuilds/base:latest
     steps:
       - slack/notify:
           channel: gatsby-theme
