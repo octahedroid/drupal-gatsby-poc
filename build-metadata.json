@@ -1,1 +1,1 @@
-{"url":"","ref":"dev","sha":"785962fe36c5f2e3ec3cec4db5b4a0f0250aae18","comment":"CI: feat: removing ci scripts and adding circleci orb (#6)","commit-date":"2020-08-28 15:38:59 -0700","build-date":"2020-08-28 23:05:58 +0000"}
+{"url":"","ref":"dev","sha":"0d5afa5e168b7f5bbd35c64f0b8a39665b3e23d1","comment":"CI: fix: adding quicksilver hooks","commit-date":"2020-08-28 16:05:59 -0700","build-date":"2020-08-28 23:19:12 +0000"}
