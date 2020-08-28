@@ -1,0 +1,73 @@
+uuid: 11e879a8-6535-4bbe-a8a2-bdcc1b39574c
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_content
+    - node.type.page
+    - paragraphs.paragraphs_type.card_group
+    - paragraphs.paragraphs_type.card_image_group
+    - paragraphs.paragraphs_type.from_library
+    - paragraphs.paragraphs_type.hero_cta
+    - paragraphs.paragraphs_type.hero_text
+    - paragraphs.paragraphs_type.static
+    - paragraphs.paragraphs_type.text
+  module:
+    - entity_reference_revisions
+id: node.page.field_content
+field_name: field_content
+entity_type: node
+bundle: page
+label: Content
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    negate: 0
+    target_bundles:
+      card_group: card_group
+      card_image_group: card_image_group
+      from_library: from_library
+      hero_cta: hero_cta
+      hero_text: hero_text
+      static: static
+      text: text
+    target_bundles_drag_drop:
+      card:
+        weight: 12
+        enabled: false
+      card_group:
+        enabled: true
+        weight: 13
+      card_image:
+        weight: 14
+        enabled: false
+      card_image_group:
+        enabled: true
+        weight: 15
+      code_snippet:
+        weight: 16
+        enabled: false
+      cta:
+        weight: 17
+        enabled: false
+      from_library:
+        enabled: true
+        weight: 18
+      hero_cta:
+        enabled: true
+        weight: 19
+      hero_text:
+        enabled: true
+        weight: 20
+      static:
+        enabled: true
+        weight: 21
+      text:
+        enabled: true
+        weight: 22
+field_type: entity_reference_revisions
