@@ -13,10 +13,10 @@ workflows:
                 mentions: 'USERID1,USERID2,'
                 message: New multienv has ben created on https://pr-${CIRCLE_PR_NUMBER}-${TERMINUS_SITE}.pantheonsite.io
                 webhook: webhook
-                filters:
-                branches:
-                  ignore:
-                    - master
+              filters:
+              branches:
+                ignore:
+                  - master
 orbs:
   pantheon: pantheon-systems/pantheon@0.5.1
   slack: circleci/slack@3.4.2
