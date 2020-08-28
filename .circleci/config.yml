@@ -22,8 +22,6 @@ commands:
             if [ -f "config/system.site.yml" ] ; then
               terminus -n drush "$TERMINUS_SITE.$TERMINUS_ENV" -- config-import --yes
             fi
-
-  
 workflows:
   version: 2
   multidev_pr:
@@ -40,6 +38,10 @@ workflows:
                 channel: gatsby-theme
                 color: '#fc7703'
                 message: 'Changes of ${CIRCLE_PULL_REQUEST} available on ${MULTIDEV_SITE_URL}'
+            - slack/status:
+                fail_only: true
+                channel: gatsby-theme
+          webhook: webhook
           filters:
               branches:
                 ignore:
@@ -58,6 +60,9 @@ workflows:
                 channel: gatsby-theme
                 color: '#03fc0b'
                 message: 'Changes synced on ${DEV_SITE_URL} :tada:'
+            - slack/status:
+                fail_only: true
+                channel: gatsby-theme
           filters:
               branches:
                 only:
