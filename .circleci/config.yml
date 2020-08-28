@@ -1,29 +1,21 @@
 version: 2.1
-jobs:
-  notify:
-    docker:
-      - image: cibuilds/base:latest
-    steps:
-      - slack/notify:
-          channel: gatsby-theme
-          color: '#42e2f4'
-          mentions: 'USERID1,USERID2,'
-          message: New multienv has ben created on https://pr-${CIRCLE_PR_NUMBER}-${TERMINUS_SITE}.pantheonsite.io
-
 workflows:
   version: 2
-  just_push:
+  just_push_pr:
     jobs:
-      - notify:
-        filters:
-            branches:
-              ignore:
-                - master
-      # - pantheon/push:
-      #     checkout: false
-      #     terminus_clone_env: dev
-      #     post-steps:
-            
+      - pantheon/push:
+          checkout: false
+          terminus_clone_env: dev
+          pre-steps:
+            - slack/notify:
+                channel: gatsby-theme
+                color: '#2cd124'
+                message: New multienv has ben created on https://${TERMINUS_ENV}-${TERMINUS_SITE}.pantheonsite.io
+                image_url: https://emoji.slack-edge.com/T3KUK6AJZ/barnacles/934bb482eecbce43.png
+          filters:
+              branches:
+                ignore:
+                  - master
 orbs:
   pantheon: pantheon-systems/pantheon@0.5.1
   slack: circleci/slack@3.4.2
