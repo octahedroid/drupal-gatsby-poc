@@ -1,18 +1,25 @@
 version: 2.1
-workflows:
-  version: 2
-  just_push:
-    jobs:
+jobs:
+  notify:
+    docker:
+      - image: alpine
+    steps:
       - slack/notify:
           channel: gatsby-theme
           color: '#42e2f4'
           mentions: 'USERID1,USERID2,'
           message: New multienv has ben created on https://pr-${CIRCLE_PR_NUMBER}-${TERMINUS_SITE}.pantheonsite.io
           webhook: webhook
+
+workflows:
+  version: 2
+  just_push:
+    jobs:
+      - notify:
         filters:
-        branches:
-          ignore:
-            - master
+            branches:
+              ignore:
+                - master
       # - pantheon/push:
       #     checkout: false
       #     terminus_clone_env: dev
