@@ -1,1 +1,1 @@
-{"url":"","ref":"dev","sha":"0d5afa5e168b7f5bbd35c64f0b8a39665b3e23d1","comment":"CI: fix: adding quicksilver hooks","commit-date":"2020-08-28 16:05:59 -0700","build-date":"2020-08-28 23:19:12 +0000"}
+{"url":"","ref":"dev","sha":"683f02c235d4ccf32ee737c6fef817c82f4307ea","comment":"CI: fix: removing config import","commit-date":"2020-08-28 16:19:14 -0700","build-date":"2020-08-28 23:33:03 +0000"}

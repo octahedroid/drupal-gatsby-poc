@@ -1,0 +1,6 @@
+name: Octahedroid Content
+type: module
+description: Default content for the Octahedroid site..
+core_version_requirement: '^8.7.7 || ^9'
+dependencies:
+  - yaml_content
