@@ -1,16 +1,41 @@
 version: 2.1
+
+commands:
+  install-composer-deps:
+    steps:
+      - restore_cache:
+          keys:
+            - php-deps-v1-{{ checksum "composer.lock" }}
+      - run: composer -n install --optimize-autoloader --ignore-platform-reqs --no-dev
+      - run: composer prepare-for-pantheon
+      - save_cache:
+            key: php-deps-v1-{{ checksum "composer.lock" }}
+            paths:
+              - ./vendor
+  drupal-post-steps:
+    steps:
+      - run: terminus -n drush "$TERMINUS_SITE.$TERMINUS_ENV" -- updatedb -y
+      - run: terminus -n drush "$TERMINUS_SITE.$TERMINUS_ENV" cr
+      - run: 
+          command: |
+            # If exported configuration is available, then import it.
+            if [ -f "config/system.site.yml" ] ; then
+              terminus -n drush "$TERMINUS_SITE.$TERMINUS_ENV" -- config-import --yes
+            fi
+
+  
 workflows:
   version: 2
-  just_push_pr:
+  multidev_pr:
     jobs:
       - pantheon/push:
           checkout: false
           terminus_clone_env: dev
           pre-steps:
             - checkout
-            - run: composer -n install --optimize-autoloader --ignore-platform-reqs --no-dev
-            - run: composer prepare-for-pantheon
+            - install-composer-deps
           post-steps:
+            - drupal-post-steps
             - slack/notify:
                 channel: gatsby-theme
                 color: '#fc7703'
@@ -18,6 +43,24 @@ workflows:
           filters:
               branches:
                 ignore:
+                  - master
+  push_pantheon:
+    jobs:
+      - pantheon/push:
+          checkout: false
+          terminus_clone_env: dev
+          pre-steps:
+            - checkout
+            - install-composer-deps
+          post-steps:
+            - drupal-post-steps
+            - slack/notify:
+                channel: gatsby-theme
+                color: '#03fc0b'
+                message: 'Changes synced on ${DEV_SITE_URL} :tada:'
+          filters:
+              branches:
+                only:
                   - master
 orbs:
   pantheon: pantheon-systems/pantheon@0.5.1
