@@ -1,1 +1,1 @@
-{"url":"","ref":"dev","sha":"5cf9ed9142a6900f2a75914856ec5eafb0c642ef","comment":"Build assets for dev.","commit-date":"2020-08-28 09:56:52 -0700","build-date":"2020-08-28 22:38:57 +0000"}
+{"url":"","ref":"dev","sha":"785962fe36c5f2e3ec3cec4db5b4a0f0250aae18","comment":"CI: feat: removing ci scripts and adding circleci orb (#6)","commit-date":"2020-08-28 15:38:59 -0700","build-date":"2020-08-28 23:05:58 +0000"}
