@@ -41,7 +41,6 @@ workflows:
             - slack/status:
                 fail_only: true
                 channel: gatsby-theme
-          webhook: webhook
           filters:
               branches:
                 ignore:
