@@ -4,14 +4,12 @@ workflows:
   just_push_pr:
     jobs:
       - pantheon/push:
-          checkout: false
           terminus_clone_env: dev
-          pre-steps:
+          post-steps:
             - slack/notify:
                 channel: gatsby-theme
                 color: '#2cd124'
-                message: New multienv has ben created on https://${TERMINUS_ENV}-${TERMINUS_SITE}.pantheonsite.io
-                image_url: https://emoji.slack-edge.com/T3KUK6AJZ/barnacles/934bb482eecbce43.png
+                message: 'Changes of ${TERMINUS_ENV} available on https://${TERMINUS_ENV}-${TERMINUS_SITE}.pantheonsite.io :eyes:'
           filters:
               branches:
                 ignore:
