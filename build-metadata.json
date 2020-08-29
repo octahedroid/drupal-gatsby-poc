@@ -1,1 +1,1 @@
-{"url":"","ref":"dev","sha":"4b66f8a0791db0b00abeae6f1f05859a1e09b359","comment":"CI: fix: moving QS hooks into web directory","commit-date":"2020-08-28 17:18:19 -0700","build-date":"2020-08-29 00:34:14 +0000"}
+{"url":"","ref":"dev","sha":"756d344d1877285cdd78f0e28bb4431c42abb622","comment":"CI: feat: Adds Blog, Contact and JAMstack pages (#8)","commit-date":"2020-08-28 17:34:15 -0700","build-date":"2020-08-29 01:12:10 +0000"}
