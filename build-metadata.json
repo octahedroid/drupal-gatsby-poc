@@ -1,1 +1,1 @@
-{"url":"","ref":"dev","sha":"ec03299f62d6221678f199783375378b3ae531b5","comment":"CI: fix: removing QS push-back","commit-date":"2020-08-28 17:01:44 -0700","build-date":"2020-08-29 00:18:17 +0000"}
+{"url":"","ref":"dev","sha":"4b66f8a0791db0b00abeae6f1f05859a1e09b359","comment":"CI: fix: moving QS hooks into web directory","commit-date":"2020-08-28 17:18:19 -0700","build-date":"2020-08-29 00:34:14 +0000"}
