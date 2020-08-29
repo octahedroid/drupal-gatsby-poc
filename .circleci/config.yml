@@ -24,7 +24,7 @@ commands:
             fi
 workflows:
   version: 2
-  multidev_pr:
+  build_and_test:
     jobs:
       - pantheon/push:
           checkout: false
@@ -35,7 +35,9 @@ workflows:
           post-steps:
             - drupal-post-steps
             - slack/notify:
+                title: 'Environment created/updated :eyes:'
                 channel: gatsby-theme
+                author_name: ${CIRCLE_USERNAME}
                 color: '#42cef5'
                 message: 'Changes of ${CIRCLE_PULL_REQUEST} available on ${MULTIDEV_SITE_URL}'
             - slack/status:
@@ -45,8 +47,6 @@ workflows:
               branches:
                 ignore:
                   - master
-  push_pantheon:
-    jobs:
       - pantheon/push:
           checkout: false
           terminus_clone_env: dev
@@ -56,9 +56,11 @@ workflows:
           post-steps:
             - drupal-post-steps
             - slack/notify:
+                title: 'Deploy :rocket:'
                 channel: gatsby-theme
+                author_name: ${CIRCLE_USERNAME}
                 color: '#03fc0b'
-                message: 'Changes synced on ${DEV_SITE_URL} :tada:'
+                message: 'Changes deployed on ${DEV_SITE_URL} :tada:'
             - slack/status:
                 fail_only: true
                 channel: gatsby-theme
