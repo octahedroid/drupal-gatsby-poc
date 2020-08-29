@@ -6,6 +6,17 @@
   path:
     - alias: '/home'
       pathauto: false
+  field_summary:
+    - value: 'We are a professional services and consulting agency specializing in modern front-end tools, cloud native architectures, automation and CMS integrations.'
+  field_image:
+    - entity: 'media'
+      bundle: 'image'
+      field_media_image:
+        - '#process':
+            callback: 'file'
+            args:
+              - 'image'
+              - filename: 'location.png'
   field_content:
     - entity: 'paragraph'
       type: 'hero_cta'
@@ -18,8 +29,13 @@
             <p>Let us help you maximize your project with the latest and modern technologies.</p>
           format: 'basic_html'
       field_link:
-        - uri: 'internal:/contact'
-          title: 'Work with us!'
+        - '#process':
+            callback: 'reference_uri'
+            args:
+              - 'node'
+              - type: 'page'
+                title: 'Contact'
+            title: 'Work with us!'
       field_image:
         - entity: 'media'
           bundle: 'image'
@@ -53,8 +69,13 @@
                       - 'image'
                       - filename: 'fixing-website.png'
           field_link:
-            - uri: 'internal:/cms'
-              title: 'CMS'
+            - '#process':
+                callback: 'reference_uri'
+                args:
+                  - 'node'
+                  - type: 'page'
+                    title: 'CMS'
+                title: 'CMS'
         - entity: 'paragraph'
           type: 'card'
           field_title: 'JAMstack'
@@ -68,7 +89,12 @@
                       - 'image'
                       - filename: 'editing-shapes.png'
           field_link:
-            - uri: 'internal:/jamstack'
+            - '#process':
+                callback: 'reference_uri'
+                args:
+                  - 'node'
+                  - type: 'page'
+                    title: 'JAMstack'
               title: 'JAMstack'
     - entity: 'paragraph'
       type: 'from_library'
@@ -87,5 +113,230 @@
                     <p>We are a team of people who share the vision of modern websites and applications, that are fast, secure, reliable, and easy to maintain.</p>
                   format: 'basic_html'
               field_link:
-                - uri: 'internal:/contact'
-                  title: 'Work with us!'
+                - '#process':
+                    callback: 'reference_uri'
+                    args:
+                      - 'node'
+                      - type: 'page'
+                        title: 'Contact'
+                    title: 'Work with us!'
+- entity: 'node'
+  type: 'page'
+  title: 'Blog'
+  uid: 1
+  status: 1
+  path:
+    - alias: '/blog'
+      pathauto: false
+  field_summary:
+    - value: 'More than a blog section, think about this space as a Digital Garden. A place where we will be sharing ideas, code snippets and knowledge openly.'
+  field_image:
+    - entity: 'media'
+      bundle: 'image'
+      field_media_image:
+        - '#process':
+            callback: 'file'
+            args:
+              - 'image'
+              - filename: 'Conversation-3.jpg'
+  field_content:
+    - entity: 'paragraph'
+      type: 'hero_text'
+      field_title:
+        - value: 'Our creative thinking'
+      field_text:
+        - value: >
+            <p>More than a blog section, think about this space as a Digital Garden. A place where we will be sharing ideas, code snippets and knowledge openly.</p>
+          format: 'full_html'
+    - entity: 'paragraph'
+      type: 'static'
+      field_component:
+        - value: 'BlogTeaserList'
+- entity: 'node'
+  type: 'page'
+  title: 'JAMstack'
+  uid: 1
+  status: 1
+  path:
+    - alias: '/jamstack'
+      pathauto: false
+  field_image:
+    - entity: 'media'
+      bundle: 'image'
+      field_media_image:
+        - '#process':
+            callback: 'file'
+            args:
+              - 'image'
+              - filename: 'editing-shapes.png'
+  field_summary:
+    - value: 'Are you ready to embrace the modern web?
+        Start your project with us. We can help you to maximize and take your project to the next level with modern front-end tools, cloud native architectures, automation and CMS integrations.'
+  field_content:
+    - entity: 'paragraph'
+      type: 'hero_cta'
+      field_intro:
+        - value: 'Looking for fast and secure sites and apps?'
+      field_title:
+        - value: 'Are you ready to embrace the modern web?'
+      field_text:
+        - value: >
+            <p>Start your project with us. We can help you to maximize and take your project to the next level with modern front-end tools, cloud native architectures, automation and CMS integrations.</p>
+          format: 'basic_html'
+      field_link:
+        - '#process':
+            callback: 'reference_uri'
+            args:
+              - 'node'
+              - type: 'page'
+                title: 'Contact'
+            title: 'Get in touch!'
+      field_image:
+        - entity: 'media'
+          bundle: 'image'
+          field_media_image:
+            - '#process':
+                callback: 'file'
+                args:
+                  - 'image'
+                  - filename: 'editing-shapes.png'
+    - entity: 'paragraph'
+      type: 'card_group'
+      field_title:
+        - value: 'Why JAMstack'
+      field_columns:
+        - value: 2
+      field_centered:
+        - value: 1
+      field_cta:
+        - value: 0
+      field_cards:
+        - entity: 'paragraph'
+          type: 'card'
+          field_title: 'Better performance'
+          field_image:
+            - entity: 'media'
+              bundle: 'image'
+              field_media_image:
+                - '#process':
+                    callback: 'file'
+                    args:
+                      - 'image'
+                      - filename: 'launch.png'
+          field_text:
+            - value: >
+                <p>Your visitors no longer have to wait for pages to build on the fly. Because you can generate all those pages at deploy time. When it comes to minimizing the time to first byte, nothing beats pre-built files served over a CDN.</p>
+              format: 'basic_html'
+        - entity: 'paragraph'
+          type: 'card'
+          field_title: 'Higher security'
+          field_text:
+            - value:  >
+                <p>With server-side processes abstracted into micro-service APIs, surface areas for attacks are reduced. You can also leverage the domain expertise of specialist third-party SaaS services, and APIs.</p>
+              format: 'basic_html'
+          field_image:
+            - entity: 'media'
+              bundle: 'image'
+              field_media_image:
+                - '#process':
+                    callback: 'file'
+                    args:
+                      - 'image'
+                      - filename: 'secure.png'
+        - entity: 'paragraph'
+          type: 'card'
+          field_title: 'Easier to scale'
+          field_text:
+            - value:  >
+                <p>Deployment is just files that need to be served somewhere; scaling is a matter of serving those files in more places. As long as your CDN is up, your site will never go down. If you require server-side processing you can rely on a Serverless architecture and this scales automatically as your user base extends.</p>
+              format: 'basic_html'
+          field_image:
+            - entity: 'media'
+              bundle: 'image'
+              field_media_image:
+                - '#process':
+                    callback: 'file'
+                    args:
+                      - 'image'
+                      - filename: 'growth.png'
+        - entity: 'paragraph'
+          type: 'card'
+          field_title: 'Better developer experience'
+          field_text:
+            - value:  >
+               <p>Iterate faster, deliver better work. Loose coupling and separation of concerns allow for more targeted development. Enjoy the power of the latest web technologies such as React, Webpack, modern JavaScript, CSS and more.</p>
+              format: 'basic_html'
+          field_image:
+            - entity: 'media'
+              bundle: 'image'
+              field_media_image:
+                - '#process':
+                    callback: 'file'
+                    args:
+                      - 'image'
+                      - filename: 'virtual-reality.png'
+    - entity: 'paragraph'
+      type: 'from_library'
+      field_reusable_paragraph:
+        - entity: 'paragraphs_library_item'
+          label: 'CTA Ready'
+          uid: 1
+          status: 1
+          paragraphs:
+            - entity: 'paragraph'
+              type: 'cta'
+              field_title:
+                - value: 'Ready to embrace the JAMstack revolution?'
+              field_text:
+                - value: >
+                    <p>Build fast and secure sites and apps delivered by pre-rendering files and serving them directly from a CDN, removing the requirement to manage or run web servers, databases and worry about traffic spikes.</p>
+                  format: 'basic_html'
+              field_link:
+                - '#process':
+                    callback: 'reference_uri'
+                    args:
+                      - 'node'
+                      - type: 'page'
+                        title: 'Contact'
+                    title: 'Work with us!'
+- entity: 'node'
+  type: 'page'
+  title: 'Contact'
+  uid: 1
+  status: 1
+  path:
+    - alias: '/contact'
+      pathalias: false
+  field_image:
+    - entity: 'media'
+      bundle: 'image'
+      field_media_image:
+        - '#process':
+            callback: 'file'
+            args:
+              - 'image'
+              - filename: 'searching.png'
+  field_content:
+    - entity: 'paragraph'
+      type: 'hero_cta'
+      field_intro:
+        - value: 'Got a question?'
+      field_title:
+        - value: 'Contact us and let us know how can we help you'
+      field_text:
+        - value: >
+            <p>We’re here to help and answer any question you might have. We look forward to hearing from you</p>
+          format: 'basic_html'
+      field_image:
+        - entity: 'media'
+          bundle: 'image'
+          field_media_image:
+            - '#process':
+                callback: 'file'
+                args:
+                  - 'image'
+                  - filename: 'searching.png'
+    - entity: 'paragraph'
+      type: 'static'
+      field_component:
+        - value: 'Contact'
