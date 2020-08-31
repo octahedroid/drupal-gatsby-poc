@@ -4,3 +4,20 @@ config:
   framework: drupal8
   site: drupal-gatsby-poc
   id: 45e9c64e-ab92-4a5e-8fa8-e0d2aaaa09fc
+tooling:
+  content:
+    service: appserver
+    description: Run default content creation
+    cmd:
+      - echo "Clearing caches. \n"
+      - drush cr -y
+      - echo "\n"
+      - echo "Installing Octahedroid Content and YAML Content modules. \n"
+      - drush en octahedroid_content -y
+      - echo "\n"
+      - echo "Creating default content. \n"
+      - drush yaml-content-import-module octahedroid_content -y
+      - echo "\n"
+      - echo "Uninstalling Octahedroid Content and YAML Content, as they are no longer needed. \n"
+      - drush pmu octahedroid_content yaml_content -y
+    user: www-data
