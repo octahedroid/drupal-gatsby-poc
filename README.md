@@ -26,10 +26,7 @@ Clone this repo <code>git clone git@github.com:octahedroid/drupal-gatsby-poc.git
 
 ### Creating default content
 Default content has been included for the Home, Blog, Contact and JAMStack pages.
-1. Start by enabling the Octahedroid Content module: <code>lando drush en octahedroid_content</code>. This will also enable the YAML Content module.
-2. Import the content by running <code>lando drush yaml-content-import-module octahedroid_content</code>
-3. Verify that the content has been correctly imported in the content management listing: https://drupal-gatsby-poc.lndo.site/admin/content
-
+1. Run the included Lando command to create default content: <code>lando content</code>
 ### Installing modules
 Modules are installed using composer, and should be enabled and their configuration exported using drush:
 1. <code>lando composer require drupal/module_name </code>
