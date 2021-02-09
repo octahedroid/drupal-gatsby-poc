@@ -4,27 +4,29 @@ namespace Drupal\graphql\Plugin;
 
 use Drupal\Component\Plugin\PluginInspectionInterface;
 use Drupal\Component\Plugin\DerivativeInspectionInterface;
+use Drupal\graphql\GraphQL\ResolverRegistryInterface;
 
 interface SchemaPluginInterface extends PluginInspectionInterface, DerivativeInspectionInterface {
 
   /**
    * Retrieves the schema.
    *
+   * @param \Drupal\graphql\GraphQL\ResolverRegistryInterface $registry
+   *   The resolver registry.
+   *
    * @return \GraphQL\Type\Schema
    *   The schema.
    */
-  public function getSchema();
+  public function getSchema(ResolverRegistryInterface $registry);
 
   /**
-   * Validates the schema.
+   * Retrieves the resolver registry.
    *
-   * @return null|array
+   * @todo Instead, this should be configuration.
+   *
+   * @return \Drupal\graphql\GraphQL\ResolverRegistryInterface
+   *   The resolver registry.
    */
-  public function validateSchema();
-
-  /**
-   * @return mixed
-   */
-  public function getServer();
+  public function getResolverRegistry();
 
 }

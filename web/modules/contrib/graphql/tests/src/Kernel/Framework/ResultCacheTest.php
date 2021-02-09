@@ -4,10 +4,13 @@ namespace Drupal\Tests\graphql\Kernel\Framework;
 
 use Drupal\Core\Cache\Context\CacheContextsManager;
 use Drupal\Core\Cache\Context\ContextCacheKeys;
-use Drupal\graphql\GraphQL\Cache\CacheableValue;
-use Drupal\graphql\GraphQL\QueryProvider\QueryProviderInterface;
+use Drupal\Core\Render\RenderContext;
+use Drupal\graphql\GraphQL\Execution\FieldContext;
 use Drupal\Tests\graphql\Kernel\GraphQLTestBase;
 use Prophecy\Argument;
+use Drupal\graphql\Entity\Server;
+use Drupal\Core\Cache\CacheableDependencyInterface;
+use GraphQL\Deferred;
 
 /**
  * Test query result caching.
@@ -17,22 +20,39 @@ use Prophecy\Argument;
 class ResultCacheTest extends GraphQLTestBase {
 
   /**
+   * {@inheritdoc}
+   */
+  public function setUp() {
+    parent::setUp();
+
+    $schema = <<<GQL
+      type Query {
+        root: String
+        leakA: String
+        leakB: String
+      }
+GQL;
+    $this->setUpSchema($schema);
+  }
+
+  /**
    * Check basic result caching.
    */
   public function testCacheableResult() {
-    $this->mockField('root', [
-      'id' => 'root',
-      'name' => 'root',
-      'type' => 'String',
-    ], NULL, function ($field) {
-      $field
-        ->expects(static::once())
-        ->method('resolveValues')
-        ->willReturnCallback(function () {
-          yield 'test';
-        });
-    });
+    $dummy = $this->getMockBuilder(Server::class)
+      ->disableOriginalConstructor()
+      ->setMethods(['id'])
+      ->getMock();
 
+    $dummy->expects($this->once())
+      ->method('id')
+      ->willReturn('test');
+
+    $this->mockResolver('Query', 'root',
+      function () use ($dummy) {
+        return $dummy->id();
+      }
+    );
 
     // The first request that is supposed to be cached.
     $this->query('{ root }');
@@ -45,21 +65,39 @@ class ResultCacheTest extends GraphQLTestBase {
    * Verify that uncacheable results are not cached.
    */
   public function testUncacheableResult() {
-    $this->mockField('root', [
-      'id' => 'root',
-      'name' => 'root',
-      'type' => 'String',
-    ], NULL, function ($field) {
-      $callback = function () {
-        yield (new CacheableValue('test'))->mergeCacheMaxAge(0);
-      };
+    $cacheable = $this->getMockBuilder(CacheableDependencyInterface::class)
+      ->setMethods(['getCacheTags', 'getCacheMaxAge', 'getCacheContexts'])
+      ->getMock();
 
-      $field
-        ->expects(static::exactly(2))
-        ->method('resolveValues')
-        ->will($this->toBoundPromise($callback, $field));
-    });
+    $cacheable->expects($this->any())
+      ->method('getCacheTags')
+      ->willReturn([]);
 
+    $cacheable->expects($this->any())
+      ->method('getCacheMaxAge')
+      ->willReturn(0);
+
+    $cacheable->expects($this->any())
+      ->method('getCacheContexts')
+      ->willReturn([]);
+
+    $dummy = $this->getMockBuilder(Server::class)
+      ->disableOriginalConstructor()
+      ->setMethods(['id'])
+      ->getMock();
+
+    $dummy->expects($this->exactly(2))
+      ->method('id')
+      ->willReturn('test');
+
+    $this->mockResolver('Query', 'root',
+      $this->builder->compose(
+        $this->builder->fromValue($cacheable),
+        $this->builder->callback(function () use ($dummy) {
+          return $dummy->id();
+        })
+      )
+    );
 
     // The first request that is not supposed to be cached.
     $this->query('{ root }');
@@ -72,20 +110,39 @@ class ResultCacheTest extends GraphQLTestBase {
    * Verify that fields with uncacheable annotations are not cached.
    */
   public function testUncacheableResultAnnotation() {
-    $this->mockField('root', [
-      'id' => 'root',
-      'name' => 'root',
-      'type' => 'String',
-      'response_cache_max_age' => 0,
-    ], NULL, function ($field) {
-      $field
-        ->expects(static::exactly(2))
-        ->method('resolveValues')
-        ->willReturnCallback(function () {
-          yield 'test';
-        });
-    });
+    $cacheable = $this->getMockBuilder(CacheableDependencyInterface::class)
+      ->setMethods(['getCacheTags', 'getCacheMaxAge', 'getCacheContexts'])
+      ->getMock();
 
+    $cacheable->expects($this->any())
+      ->method('getCacheTags')
+      ->willReturn([]);
+
+    $cacheable->expects($this->any())
+      ->method('getCacheMaxAge')
+      ->willReturn(0);
+
+    $cacheable->expects($this->any())
+      ->method('getCacheContexts')
+      ->willReturn([]);
+
+    $dummy = $this->getMockBuilder(Server::class)
+      ->disableOriginalConstructor()
+      ->setMethods(['id'])
+      ->getMock();
+
+    $dummy->expects($this->exactly(2))
+      ->method('id')
+      ->willReturn('test');
+
+    $this->mockResolver('Query', 'root',
+      $this->builder->compose(
+        $this->builder->fromValue($cacheable),
+        $this->builder->callback(function () use ($dummy) {
+          return $dummy->id();
+        })
+      )
+    );
 
     // The first request that is not supposed to be cached.
     $this->query('{ root }');
@@ -95,36 +152,63 @@ class ResultCacheTest extends GraphQLTestBase {
   }
 
   /**
-   * Test if caching properly handles variabels.
+   * Test if caching properly handles variables.
    */
   public function testVariables() {
-    $this->mockField('root', [
-      'id' => 'root',
-      'name' => 'root',
-      'type' => 'String',
-    ], NULL, function ($field) {
-      $field
-        ->expects(static::exactly(2))
-        ->method('resolveValues')
-        ->willReturnCallback(function () {
-          yield 'test';
-        });
-    });
+    $dummy = $this->getMockBuilder(Server::class)
+      ->disableOriginalConstructor()
+      ->setMethods(['id'])
+      ->getMock();
+
+    $dummy->expects($this->exactly(2))
+      ->method('id')
+      ->willReturn('test');
+
+    $this->mockResolver('Query', 'root',
+      function () use ($dummy) {
+        return $dummy->id();
+      }
+    );
 
     // This result will be stored in the cache.
-    $this->query('{ root }', ['value' => 'a']);
+    $this->query('{ root }', NULL, ['value' => 'a']);
 
     // This will trigger a new evaluation since it passes different variables.
-    $this->query('{ root }', ['value' => 'b']);
+    $this->query('{ root }', NULL, ['value' => 'b']);
 
     // This should be served from cache.
-    $this->query('{ root }', ['value' => 'a']);
+    $this->query('{ root }', NULL, ['value' => 'a']);
   }
 
   /**
    * Test if changing test context's trigger re-evaluations.
    */
   public function testContext() {
+    $cacheable = $this->getMockBuilder(CacheableDependencyInterface::class)
+      ->setMethods(['getCacheTags', 'getCacheMaxAge', 'getCacheContexts'])
+      ->getMock();
+
+    $cacheable->expects($this->any())
+      ->method('getCacheTags')
+      ->willReturn([]);
+
+    $cacheable->expects($this->any())
+      ->method('getCacheMaxAge')
+      ->willReturn(45);
+
+    $cacheable->expects($this->any())
+      ->method('getCacheContexts')
+      ->willReturn(['context']);
+
+    $dummy = $this->getMockBuilder(Server::class)
+      ->disableOriginalConstructor()
+      ->setMethods(['id'])
+      ->getMock();
+
+    $dummy->expects($this->exactly(2))
+      ->method('id')
+      ->willReturn('test');
+
     // Prepare a prophesied context manager.
     $contextManager = $this->prophesize(CacheContextsManager::class);
     $this->container->set('cache_contexts_manager', $contextManager->reveal());
@@ -147,21 +231,16 @@ class ResultCacheTest extends GraphQLTestBase {
     /** @var \Prophecy\Prophecy\MethodProphecy $contextKeys */
     $contextKeys = $contextManager->convertTokensToKeys($hasContext);
 
-    $this->mockField('root', [
-      'id' => 'root',
-      'name' => 'root',
-      'type' => 'String',
-      'response_cache_contexts' => ['context'],
-    ], NULL, function ($field) {
-      $field
-        ->expects(static::exactly(2))
-        ->method('resolveValues')
-        ->willReturnCallback(function () {
-          yield 'test';
-        });
-    });
+    $this->mockResolver('Query', 'root',
+      $this->builder->compose(
+        $this->builder->fromValue($cacheable),
+        $this->builder->callback(function () use ($dummy) {
+          return $dummy->id();
+        })
+      )
+    );
 
-    // Set the context value to 'a'/
+    // Set the context value to 'a'/.
     $contextKeys->willReturn(new ContextCacheKeys(['a']));
     // This will be stored in the cache key for context 'a'.
     $this->query('{ root }');
@@ -181,19 +260,39 @@ class ResultCacheTest extends GraphQLTestBase {
    * Test if results cache properly acts on cache tag clears.
    */
   public function testTags() {
-    $this->mockField('root', [
-      'id' => 'root',
-      'name' => 'root',
-      'type' => 'String',
-      'response_cache_tags' => ['a', 'b'],
-    ], NULL, function ($field) {
-      $field
-        ->expects(static::exactly(2))
-        ->method('resolveValues')
-        ->willReturnCallback(function () {
-          yield 'test';
-        });
-    });
+    $cacheable = $this->getMockBuilder(CacheableDependencyInterface::class)
+      ->setMethods(['getCacheTags', 'getCacheMaxAge', 'getCacheContexts'])
+      ->getMock();
+
+    $cacheable->expects($this->any())
+      ->method('getCacheTags')
+      ->willReturn(['a', 'b']);
+
+    $cacheable->expects($this->any())
+      ->method('getCacheMaxAge')
+      ->willReturn(45);
+
+    $cacheable->expects($this->any())
+      ->method('getCacheContexts')
+      ->willReturn([]);
+
+    $dummy = $this->getMockBuilder(Server::class)
+      ->disableOriginalConstructor()
+      ->setMethods(['id'])
+      ->getMock();
+
+    $dummy->expects($this->exactly(2))
+      ->method('id')
+      ->willReturn('test');
+
+    $this->mockResolver('Query', 'root',
+      $this->builder->compose(
+        $this->builder->fromValue($cacheable),
+        $this->builder->callback(function () use ($dummy) {
+          return $dummy->id();
+        })
+      )
+    );
 
     // First call that will be cached.
     $this->query('{ root }');
@@ -212,99 +311,66 @@ class ResultCacheTest extends GraphQLTestBase {
   }
 
   /**
-   * Test persisted query handling.
-   *
-   * Ensure caching properly handles different query map versions of the same
-   * query.
-   */
-  public function testPersistedQuery() {
-    $queryProvider = $this->prophesize(QueryProviderInterface::class);
-    $this->container->set('graphql.query_provider', $queryProvider->reveal());
-
-    $queryProvider->getQuery('query:a', Argument::any())->willReturn('{ a }');
-
-    $queryProvider->getQuery('query:b', Argument::any())->willReturn('{ b }');
-
-    $this->mockField('a', [
-      'id' => 'a',
-      'name' => 'a',
-      'type' => 'String',
-    ], NULL, function ($field) {
-      $field
-        ->expects(static::exactly(1))
-        ->method('resolveValues')
-        ->willReturnCallback(function () {
-          yield 'a';
-        });
-    });
-
-    $this->mockField('b', [
-      'id' => 'b',
-      'name' => 'b',
-      'type' => 'String',
-    ], NULL, function ($field) {
-      $field
-        ->expects(static::exactly(2))
-        ->method('resolveValues')
-        ->willReturnCallback(function () {
-          yield 'b';
-        });
-    });
-
-
-    $this->persistedQuery('query:a');
-    $this->persistedQuery('query:b');
-    $this->persistedQuery('query:a');
-    $this->persistedQuery('query:b', ['value' => 'test']);
-  }
-
-  /**
    * Test behavior in case of leaking cache metadata.
    *
    * Intentionally emit undeclared cache metadata as side effect of field
    * resolvers. Should still be added to the processors result.
    */
   public function testLeakingCacheMetadata() {
-
     /** @var \Drupal\Core\Render\RendererInterface $renderer */
     $renderer = $this->container->get('renderer');
 
-    $this->mockField('leakA', [
-      'id' => 'leakA',
-      'name' => 'leakA',
-      'type' => 'String',
-    ], function () use ($renderer) {
-      $el = [
-        '#plain_text' => 'Leak A',
-        '#cache' => [
-          'tags' => ['a'],
-        ],
-      ];
-      yield $renderer->render($el)->__toString();
-    });
+    $this->mockResolver('Query', 'leakA',
+      function ($a, $b, $c, $d, FieldContext $field) use ($renderer) {
+        $el = [
+          '#plain_text' => 'Leak A',
+          '#cache' => [
+            'tags' => ['a'],
+          ],
+        ];
 
-    $this->mockField('leakB', [
-      'id' => 'leakB',
-      'name' => 'leakB',
-      'type' => 'String',
-    ], function () use ($renderer) {
-      $el = [
-        '#plain_text' => 'Leak B',
-        '#cache' => [
-          'tags' => ['b'],
-        ],
-      ];
-      $value = $renderer->render($el)->__toString();
-      return function () use ($value) {
-        yield $value;
-      };
-    });
+        $renderContext = new RenderContext();
+        $value = $renderer->executeInRenderContext($renderContext, function () use ($renderer, $el) {
+          return $renderer->render($el)->__toString();
+        });
+
+        if (!$renderContext->isEmpty()) {
+          $field->addCacheableDependency($renderContext->pop());
+        }
+
+        return $value;
+      }
+    );
+
+    $this->mockResolver('Query', 'leakB',
+      function ($a, $b, $c, $d, FieldContext $field) use ($renderer) {
+        $el = [
+          '#plain_text' => 'Leak B',
+          '#cache' => [
+            'tags' => ['b'],
+          ],
+        ];
+
+        $renderContext = new RenderContext();
+        $value = $renderer->executeInRenderContext($renderContext, function () use ($renderer, $el) {
+          return $renderer->render($el)->__toString();
+        });
+
+        if (!$renderContext->isEmpty()) {
+          $field->addCacheableDependency($renderContext->pop());
+        }
+
+        return new Deferred(function () use ($value) {
+          return $value;
+        });
+      }
+    );
 
     $query = <<<GQL
-query {
-  leakA
-  leakB
-}
+      query {
+        leakA
+        leakB
+      }
 GQL;
 
     $metadata = $this->defaultCacheMetaData()

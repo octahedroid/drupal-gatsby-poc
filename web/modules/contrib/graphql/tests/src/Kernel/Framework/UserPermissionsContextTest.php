@@ -15,15 +15,30 @@ use Drupal\Tests\graphql\Kernel\GraphQLTestBase;
 class UserPermissionsContextTest extends GraphQLTestBase {
 
   /**
+   * {@inheritdoc}
+   */
+  protected function setUp() {
+    parent::setUp();
+
+    $schema = <<<GQL
+      schema {
+        query: Query
+      }
+      
+      type Query {
+        root: String
+      }
+GQL;
+
+    $this->setUpSchema($schema);
+  }
+
+  /**
    * Assert user.permissions tag on results.
    */
   public function testUserPermissionsContext() {
-    $this->mockField('root', [
-      'name' => 'root',
-      'type' => 'String',
-    ], 'test');
-
-    $result = $this->query('query { root }');
-    $this->assertContains('user.permissions', $result->getCacheableMetadata()->getCacheContexts());
+    $this->mockResolver('Query', 'root', 'test');
+    $this->assertResults('{ root }', [], ['root' => 'test']);
   }
+
 }

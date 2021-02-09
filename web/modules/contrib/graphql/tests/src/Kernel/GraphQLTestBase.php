@@ -3,31 +3,25 @@
 namespace Drupal\Tests\graphql\Kernel;
 
 use Drupal\Core\Cache\Cache;
-use Drupal\Core\DependencyInjection\ContainerBuilder;
+use Drupal\graphql\GraphQL\ResolverBuilder;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\language\Entity\ConfigurableLanguage;
-use Drupal\Tests\graphql\Traits\ProphesizePermissionsTrait;
-use Drupal\Tests\graphql\Traits\EnableCliCacheTrait;
+use Drupal\Tests\graphql\Traits\DataProducerExecutionTrait;
+use Drupal\Tests\graphql\Traits\MockingTrait;
 use Drupal\Tests\graphql\Traits\HttpRequestTrait;
-use Drupal\Tests\graphql\Traits\IntrospectionTestTrait;
-use Drupal\Tests\graphql\Traits\MockSchemaTrait;
-use Drupal\Tests\graphql\Traits\MockGraphQLPluginTrait;
 use Drupal\Tests\graphql\Traits\QueryFileTrait;
 use Drupal\Tests\graphql\Traits\QueryResultAssertionTrait;
-use PHPUnit_Framework_Error_Notice;
-use PHPUnit_Framework_Error_Warning;
+use Drupal\Tests\graphql\Traits\SchemaPrinterTrait;
+use Drupal\Tests\user\Traits\UserCreationTrait;
 
-/**
- * Base class for GraphQL tests.
- */
 abstract class GraphQLTestBase extends KernelTestBase {
-  use EnableCliCacheTrait;
-  use ProphesizePermissionsTrait;
-  use MockGraphQLPluginTrait;
+  use DataProducerExecutionTrait;
   use HttpRequestTrait;
-  use QueryResultAssertionTrait;
-  use IntrospectionTestTrait;
   use QueryFileTrait;
+  use QueryResultAssertionTrait;
+  use SchemaPrinterTrait;
+  use MockingTrait;
+  use UserCreationTrait;
 
   /**
    * {@inheritdoc}
@@ -36,28 +30,50 @@ abstract class GraphQLTestBase extends KernelTestBase {
     'system',
     'user',
     'language',
+    'node',
     'graphql',
+    'content_translation',
+    'entity_reference_test',
+    'field',
+    'menu_link_content',
+    'link',
+    'typed_data',
   ];
 
   /**
-   * {@inheritdoc}
+   * @var \Drupal\graphql\GraphQL\ResolverBuilder
    */
-  protected function getSchemaDefinitions() {
-    return [
-      'default' => [
-        'id' => 'default',
-        'name' => 'default',
-        'path' => 'graphql',
-        'deriver' => 'Drupal\graphql\Plugin\Deriver\PluggableSchemaDeriver',
-      ],
-    ];
-  }
+  protected $builder;
 
   /**
    * {@inheritdoc}
    */
-  protected function getDefaultSchema() {
-    return 'default:default';
+  protected function setUp() {
+    parent::setUp();
+
+    $this->installConfig('system');
+    $this->installConfig('graphql');
+    $this->installEntitySchema('node');
+    $this->installEntitySchema('user');
+    $this->installSchema('node', ['node_access']);
+    $this->installSchema('user', ['users_data']);
+    $this->installEntitySchema('graphql_server');
+    $this->installEntitySchema('configurable_language');
+    $this->installConfig(['language']);
+
+    $this->setUpCurrentUser([], $this->userPermissions());
+
+    ConfigurableLanguage::create([
+      'id' => 'fr',
+      'weight' => 1,
+    ])->save();
+
+    ConfigurableLanguage::create([
+      'id' => 'de',
+      'weight' => 2,
+    ])->save();
+
+    $this->builder = new ResolverBuilder();
   }
 
   /**
@@ -71,53 +87,26 @@ abstract class GraphQLTestBase extends KernelTestBase {
    * {@inheritdoc}
    */
   protected function defaultCacheTags() {
-    return [
-      'graphql',
-    ];
+    $tags = ['graphql_response'];
+    if (isset($this->server)) {
+      array_push($tags, "config:graphql.graphql_servers.{$this->server->id()}");
+    }
+
+    return $tags;
   }
 
   /**
    * {@inheritdoc}
    */
   protected function defaultCacheContexts() {
-    return [
-      'user.permissions',
-      'languages:language_url',
-      'languages:language_interface',
-      'languages:language_content',
-    ];
+    return ['user.permissions'];
   }
 
   /**
-   * {@inheritdoc}
+   * @return array
    */
-  public function register(ContainerBuilder $container) {
-    parent::register($container);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function setUp() {
-    parent::setUp();
-    $this->injectTypeSystemPluginManagers($this->container);
-
-    PHPUnit_Framework_Error_Warning::$enabled = FALSE;
-
-    $this->injectAccount();
-    $this->installConfig('system');
-    $this->installConfig('graphql');
-    $this->mockSchema('default');
-
-    $this->installEntitySchema('configurable_language');
-    $this->installConfig(['language']);
-    $this->container->get('language_negotiator')
-      ->setCurrentUser($this->accountProphecy->reveal());
-
-    ConfigurableLanguage::create([
-      'id' => 'fr',
-      'weight' => 1,
-    ])->save();
+  protected function userPermissions() {
+    return ['access content', 'bypass graphql access'];
   }
 
 }

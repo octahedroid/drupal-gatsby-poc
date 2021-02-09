@@ -2,30 +2,29 @@
 
 ## Getting started
 
-* [Getting started](README.md)
+- [Installation](starting/README.md)
+- [Creating schemas](starting/custom-schema.md)
+
+## Data Producers
+
+- [Data Producers](producers/README.md)
+- [Built-in producers](producers/built-in.md)
+- [Custom producers](producers/custom.md)
+- [Composing producers](producers/composing.md)
 
 ## Queries
 
-* [Queries](queries/README.md)
-* [Querying nodes](queries/querying-nodes.md)
-* [Querying taxonomies](queries/querying-taxonomies.md)
-* [Querying routes](queries/routes.md)
-* [Query Fragments](queries/query-fragments.md)
-* [Variables](queries/variables.md)
-* [Filters](queries/filters.md)
+- [Queries](queries/README.md)
+- [Nodes](queries/nodes.md)
+- [Entity references](queries/references.md)
+- [Menus](queries/menus.md)
+- [Routes](queries/routes.md)
 
 ## Mutations
 
-* [Mutations](mutations/README.md)
-* [Creating mutation plugins](mutations/creating-mutation-plugins.md)
-* [Writing custom mutations](mutations/custom-mutations.md)
-* [Writing custom validations](mutations/custom-validations.md)
+- [Mutations](mutations/README.md)
+- [Validations](mutations/validations.md)
 
-## Authentication
+## Advanced
 
-* [Authentication](authentication/README.md)
-
-## Metatag / SEO
-
-* [Metatag](metatag-seo/README.md)
-
+- [Composable schemas](advanced/composable-schemas.md)

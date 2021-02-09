@@ -1,56 +1,196 @@
 # Mutations
 
-In GraphQL, a mutation is the terminology used whenever you want to add, modify, or delete data stored on the server, in this case Drupal.
+In version 4 of Drupal GraphQL `Mutations` work a lot more similar to queries than they do in 3.x. Mutations are called using also Data producers which we already looked at.
 
-Unfortunately, the module does not include a way to peform common mutations out of the box due to some technical requirements of graphql. You can read more about this at the amazeelabs blog post below.
+Let's make a mutation that creates a new article. In this case it takes a data parameter that can have a `title` and a `description` in order to set these fields when creating the new article if they have been provided.
 
-Mutations must be created in a custom module. In many cases you will extend existing provided classes for adding, updating, or deleting an entity. Specifically CreateEntityBase, DeleteEntityBase, or UpdateEntityBase.
+Similar to queries we can start by adding the necessary schema information, not only to register our new mutation but also provide type safety on all parameters as well. This mutation will return the newly created "Article".
 
-A fantastic resource for implementing mutations can be found at [https://www.amazeelabs.com/en/journal/extending-graphql-part-3-mutations](https://www.amazeelabs.com/en/journal/extending-graphql-part-3-mutations)
+The code with all the demo queries and mutations in these docs can be found in the same `graphql_composable` example module.
 
-The corresponding example code for creating, deleting, updating, and fileuploads, can be found here: [https://github.com/drupal-graphql/graphql-examples](https://github.com/drupal-graphql/graphql-examples)
+## Add the schema declaration
 
-A simple mutation to add an article content type \(node entity / article bundle\) might look the following:
+Adapt your base schema file to something like this where we include a new type called `Mutation` and we also create a new input called `ArticleInput` which we will use as the type for our mutation argument.
+
+```
+type Mutation
+
+scalar Violation
+
+type Article {
+  id: Int!
+  title: String!
+  author: String
+}
+
+input ArticleInput {
+  title: String!
+  description: String
+}
+```
+
+And now in our `.exntends.graphqls` file we will extend the Mutation type to add our new mutation. This is so that in the future other modules can also themselves extend this type with new mutations keeping things organized.
+
+```
+extend type Mutation {
+   createArticle(data: ArticleInput): Article
+}
+```
+
+We can now see we have a Mutation called `createArticle` which takes a data parameter, and because GraphQL is heavily typed we know everything we can and must include in the new Article (`ArticleInput`) like the title which is mandatory in this case.
+
+## Implement the custom data producer (mutation)
+
+We now need to implement the actual mutation, in the file `src/Plugin/GraphQL/DataProducer` we include the following file `CreateArticle.php` :
+
+```php
+<?php
+
+namespace Drupal\graphql_composable\Plugin\GraphQL\DataProducer;
+
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\graphql\Plugin\GraphQL\DataProducer\DataProducerPluginBase;
+use Drupal\node\Entity\Node;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
+/**
+ * Creates a new article entity.
+ *
+ * @DataProducer(
+ *   id = "create_article",
+ *   name = @Translation("Create Article"),
+ *   description = @Translation("Creates a new article."),
+ *   produces = @ContextDefinition("any",
+ *     label = @Translation("Article")
+ *   ),
+ *   consumes = {
+ *     "data" = @ContextDefinition("any",
+ *       label = @Translation("Article data")
+ *     )
+ *   }
+ * )
+ */
+class CreateArticle extends DataProducerPluginBase implements ContainerFactoryPluginInterface {
+
+  /**
+   * The current user.
+   *
+   * @var \Drupal\Core\Session\AccountInterface
+   */
+  protected $currentUser;
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('current_user')
+    );
+  }
+
+  /**
+   * CreateArticle constructor.
+   *
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin_id for the plugin instance.
+   * @param array $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Drupal\Core\Session\AccountInterface $current_user
+   *   The current user.
+   */
+  public function __construct(array $configuration, string $plugin_id, array $plugin_definition, AccountInterface $current_user) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+    $this->currentUser = $current_user;
+  }
+
+  /**
+   * Creates an article.
+   *
+   * @param array $data
+   *   The title of the job.
+   *
+   * @return \Drupal\Core\Entity\EntityBase|\Drupal\Core\Entity\EntityInterface
+   *   The newly created article.
+   *
+   * @throws \Exception
+   */
+  public function resolve(array $data) {
+    if ($this->currentUser->hasPermission("create article content")) {
+      $values = [
+        'type' => 'article',
+        'title' => $data['title'],
+        'body' => $data['description'],
+      ];
+      $node = Node::create($values);
+      $node->save();
+      return $node;
+    }
+    return NULL;
+  }
+
+}
+```
+
+### Important note 
+
+One thing to notice when creating mutations like this is that Access checking needs to be done in the mutation, for queries this usually is done in the
+data producer directly (e.g. `entity_load` has access checking built-in) but because we are programatically creating
+things we need to check the user actually has access to do the operation.
+
+## Calling the mutation
+
+To add the resolvers for the `createArticle` mutation we go to our schema implementation and call the created data producer `create_article` inside the `registerResolvers` method.
+
+```php
+/**
+ * {@inheritdoc}
+ */
+public function registerResolvers(ResolverRegistryInterface $registry) {
+
+  ...
+  // Create article mutation.
+  $registry->addFieldResolver('Mutation', 'createArticle',
+    $builder->produce('create_article')
+      ->map('data', $builder->fromArgument('data'))
+  );
+
+  ...
+  return $registry;
+}
+```
+
+This mutation can now be called like this :
 
 ```graphql
 mutation {
-  addArticle(input: { title: "Hey" }) {
-    errors
-    violations {
-      message
-      code
-      path
-    }
-    article: entity {
-      ... on NodeArticle {
-        nid
-      }
+  createArticle(data: { title: "Hello GraphQl 2" }) {
+    ... on Article {
+      id
+      title
     }
   }
 }
 ```
 
-The specific returned fields on article are up to you and are specified via the object syntax following the mutation call `addArticle(input: {title: "Hey"}) {`. The input parameter is defined as an object of corresponding fields that match the fields in your content type. The error and violoations fields, are optional but can be helpful in determining whether or not something executes as intendend.
-
-In the mutation above, we use the inline fragment `... on NodeArticle { nid } to return the resulting nid of the created article.` We use the alias `article` for the returned entity to make the result a bit more friendly.
-
-The result of the above mutation would look something like this:
+and should return something like :
 
 ```json
 {
   "data": {
-    "addArticle": {
-      "errors": [],
-      "violations": [],
-      "article": {
-        "nid": 15
-      }
+    "createArticle": {
+      "id": 2,
+      "title": "Hello GraphQl 2"
     }
   }
 }
 ```
 
-External Resources:
+## Validating mutations
 
-* [http://graphql.org/learn/queries/\#mutations](http://graphql.org/learn/queries/#mutations)
-* [https://www.amazeelabs.com/en/journal/extending-graphql-part-3-mutations](https://www.amazeelabs.com/en/journal/extending-graphql-part-3-mutations)
+Now that we have our mutation in place one way we can improve this is by adding some validation so that if someone is not to create an article they get a nice error back (technically in Drupal these are called Violations) so that it can be printed to the user in whichever app this is called. In the next chapter we will look at how we can improve this code to add some validation to it.

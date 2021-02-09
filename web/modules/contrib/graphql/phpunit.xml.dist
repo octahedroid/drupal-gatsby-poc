@@ -3,11 +3,18 @@
 <phpunit bootstrap="tests/bootstrap.php" colors="true"
          beStrictAboutTestsThatDoNotTestAnything="true"
          beStrictAboutOutputDuringTests="true"
-         beStrictAboutChangesToGlobalState="true"
-         checkForUnintentionallyCoveredCode="false">
+         beStrictAboutChangesToGlobalState="true">
+  <testsuites>
+    <testsuite name="unit">
+      <file>./tests/TestSuites/UnitTestSuite.php</file>
+    </testsuite>
+    <testsuite name="kernel">
+      <file>./tests/TestSuites/KernelTestSuite.php</file>
+    </testsuite>
+  </testsuites>
   <filter>
     <whitelist>
-      <directory suffix=".php">../modules/graphql</directory>
+      <directory suffix=".php">../modules/graphql/src</directory>
       <exclude>
         <directory suffix="Test.php">../modules/graphql</directory>
         <directory suffix="TestBase.php">../modules/graphql</directory>

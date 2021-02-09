@@ -3,17 +3,22 @@
 namespace Drupal\graphql\Routing;
 
 use Drupal\Component\Utility\NestedArray;
-use Drupal\Core\Routing\Enhancer\RouteEnhancerInterface;
-use Drupal\graphql\GraphQL\QueryProvider\QueryProviderInterface;
-use Drupal\graphql\Utility\JsonHelper;
+use Drupal\Core\Routing\EnhancerInterface;
+use Drupal\graphql\GraphQL\Utility\JsonHelper;
 use GraphQL\Server\Helper;
+use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Route;
 
-class QueryRouteEnhancer implements RouteEnhancerInterface {
+class QueryRouteEnhancer implements EnhancerInterface {
 
   /**
-   * {@inheritdoc}
+   * Returns whether the enhancer runs on the current route.
+   *
+   * @param \Symfony\Component\Routing\Route $route
+   *   The current route.
+   *
+   * @return bool
    */
   public function applies(Route $route) {
     return $route->hasDefault('_graphql');
@@ -21,21 +26,22 @@ class QueryRouteEnhancer implements RouteEnhancerInterface {
 
   /**
    * {@inheritdoc}
+   *
+   * @throws \GraphQL\Server\RequestError
    */
   public function enhance(array $defaults, Request $request) {
+    $route = $defaults[RouteObjectInterface::ROUTE_OBJECT];
+    if (!$this->applies($route)) {
+      return $defaults;
+    }
+
     $helper = new Helper();
     $method = $request->getMethod();
     $body = $this->extractBody($request);
     $query = $this->extractQuery($request);
     $operations = $helper->parseRequestParams($method, $body, $query);
 
-    // By default we assume a 'single' request. This is going to fail in the
-    // graphql processor due to a missing query string but at least provides
-    // the right format for the client to act upon.
-    return $defaults + [
-      '_controller' => $defaults['_graphql']['single'],
-      'operations' => $operations,
-    ];
+    return $defaults + ['operations' => $operations];
   }
 
   /**
@@ -78,10 +84,15 @@ class QueryRouteEnhancer implements RouteEnhancerInterface {
   /**
    * Handles file uploads from multipart/form-data requests.
    *
+   * @param \Symfony\Component\HttpFoundation\Request $request
+   *   The request object.
+   * @param array $values
+   *   The request body values.
+   *
    * @return array
    *   The query parameters with added file uploads.
    */
-  protected function extractMultipart(Request $request, $values) {
+  protected function extractMultipart(Request $request, array $values) {
     // The request body parameters might contain file upload mutations. We treat
     // them according to the graphql multipart request specification.
     //
@@ -114,6 +125,5 @@ class QueryRouteEnhancer implements RouteEnhancerInterface {
 
     return $values;
   }
-
 
 }

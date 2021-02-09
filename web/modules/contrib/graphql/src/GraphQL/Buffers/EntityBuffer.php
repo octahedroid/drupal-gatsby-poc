@@ -28,7 +28,7 @@ class EntityBuffer extends BufferBase {
    *
    * @param string $type
    *   The entity type of the given entity ids.
-   * @param array|int $id
+   * @param array|int|string $id
    *   The entity id(s) to load.
    *
    * @return \Closure
@@ -71,7 +71,8 @@ class EntityBuffer extends BufferBase {
       if (is_array($item['id'])) {
         return array_reduce($item['id'], function ($carry, $current) use ($entities) {
           if (!empty($entities[$current])) {
-            return $carry + [$current => $entities[$current]];
+            array_push($carry, $entities[$current]);
+            return $carry;
           }
 
           return $carry;
