@@ -145,7 +145,7 @@
     <exclude-pattern>src/Plugin/DataProducerPluginCachingInterface.php</exclude-pattern>
     <exclude-pattern>src/Controller/RequestController.php</exclude-pattern>
     <exclude-pattern>examples/graphql_example/src/Wrappers/QueryConnection.php</exclude-pattern>
-    <exclude-pattern>examples/graphql_example/src/Plugin/GraphQL/DataProducer/QueryArticles.php</exclude-pattern>
+    <exclude-pattern>examples/graphql_example/src/Plugin/GraphQL/DataProducer/QueryBase.php</exclude-pattern>
     <exclude-pattern>examples/graphql_example/src/Plugin/GraphQL/Schema/ExampleSchema.php</exclude-pattern>
     <exclude-pattern>examples/graphql_example/src/Plugin/GraphQL/SchemaExtension/ExampleSchemaExtension.php</exclude-pattern>
     <exclude-pattern>examples/graphql_composable/src/Plugin/GraphQL/Schema/ComposableSchemaExample.php</exclude-pattern>
@@ -238,7 +238,7 @@
     <exclude-pattern>src/Plugin/DataProducerPluginManager.php</exclude-pattern>
     <exclude-pattern>src/Controller/RequestController.php</exclude-pattern>
     <exclude-pattern>examples/graphql_example/src/Wrappers/QueryConnection.php</exclude-pattern>
-    <exclude-pattern>examples/graphql_example/src/Plugin/GraphQL/DataProducer/QueryArticles.php</exclude-pattern>
+    <exclude-pattern>examples/graphql_example/src/Plugin/GraphQL/DataProducer/QueryBase.php</exclude-pattern>
     <exclude-pattern>examples/graphql_example/src/Plugin/GraphQL/Schema/ExampleSchema.php</exclude-pattern>
     <exclude-pattern>examples/graphql_example/src/Plugin/GraphQL/SchemaExtension/ExampleSchemaExtension.php</exclude-pattern>
     <exclude-pattern>tests/src/Traits/MockingTrait.php</exclude-pattern>
@@ -308,7 +308,7 @@
     <exclude-pattern>src/Plugin/DataProducerPluginCachingInterface.php</exclude-pattern>
     <exclude-pattern>src/Controller/RequestController.php</exclude-pattern>
     <exclude-pattern>examples/graphql_example/src/Wrappers/QueryConnection.php</exclude-pattern>
-    <exclude-pattern>examples/graphql_example/src/Plugin/GraphQL/DataProducer/QueryArticles.php</exclude-pattern>
+    <exclude-pattern>examples/graphql_example/src/Plugin/GraphQL/DataProducer/QueryBase.php</exclude-pattern>
     <exclude-pattern>tests/src/Traits/DataProducerExecutionTrait.php</exclude-pattern>
     <exclude-pattern>tests/src/Kernel/ResolverBuilderTest.php</exclude-pattern>
     <exclude-pattern>tests/src/Kernel/DataProducer/XML/XMLTestBase.php</exclude-pattern>

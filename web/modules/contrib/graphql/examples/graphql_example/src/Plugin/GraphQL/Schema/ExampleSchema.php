@@ -102,14 +102,14 @@ class ExampleSchema extends SdlSchemaPluginBase {
     );
 
     $registry->addFieldResolver('Query', 'pages',
-      $builder->produce('query_articles')
+      $builder->produce('query_base')
         ->map('offset', $builder->fromArgument('offset'))
         ->map('type', $builder->fromValue('page'))
         ->map('limit', $builder->fromArgument('limit'))
     );
 
     $registry->addFieldResolver('Query', 'articles',
-      $builder->produce('query_articles')
+      $builder->produce('query_base')
         ->map('offset', $builder->fromArgument('offset'))
         ->map('type', $builder->fromValue('article'))
         ->map('limit', $builder->fromArgument('limit'))

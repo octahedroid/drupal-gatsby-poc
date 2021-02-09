@@ -12,9 +12,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * @DataProducer(
- *   id = "query_articles",
- *   name = @Translation("Load articles"),
- *   description = @Translation("Loads a list of articles."),
+ *   id = "query_base",
+ *   name = @Translation("Load nodes"),
+ *   description = @Translation("Loads a list of nodes."),
  *   produces = @ContextDefinition("any",
  *     label = @Translation("General connection")
  *   ),
@@ -33,7 +33,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   }
  * )
  */
-class QueryArticles extends DataProducerPluginBase implements ContainerFactoryPluginInterface {
+class QueryBase extends DataProducerPluginBase implements ContainerFactoryPluginInterface {
 
   const MAX_LIMIT = 100;
 
@@ -57,7 +57,7 @@ class QueryArticles extends DataProducerPluginBase implements ContainerFactoryPl
   }
 
   /**
-   * Articles constructor.
+   * Constructor.
    *
    * @param array $configuration
    *   The plugin configuration.
