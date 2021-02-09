@@ -4,19 +4,29 @@ schema {
 
 type Query {
   article(id: Int!): Article
-  articles(
-    offset: Int = 0
-    limit: Int = 10
-  ): ArticleConnection!
+  articles(offset: Int = 0, limit: Int = 10): ArticleConnection!
+  pages(offset: Int = 0, limit: Int = 10): PageConnection!
 }
 
 type Article {
   id: Int!
   title: String!
   author: String
+  # description: String
+  description: String
+  descriptionRichText: String
 }
 
 type ArticleConnection {
   total: Int!
   items: [Article!]
+}
+
+type Page {
+  title: String
+}
+
+type PageConnection {
+  total: Int!
+  items: [Page!]
 }

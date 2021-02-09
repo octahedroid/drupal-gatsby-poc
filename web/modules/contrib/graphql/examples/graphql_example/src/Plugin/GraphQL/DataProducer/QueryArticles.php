@@ -16,9 +16,12 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   name = @Translation("Load articles"),
  *   description = @Translation("Loads a list of articles."),
  *   produces = @ContextDefinition("any",
- *     label = @Translation("Article connection")
+ *     label = @Translation("General connection")
  *   ),
  *   consumes = {
+ *     "type" = @ContextDefinition("string",
+ *     label = @Translation("Content type"),
+ *     ),
  *     "offset" = @ContextDefinition("integer",
  *       label = @Translation("Offset"),
  *       required = FALSE
@@ -85,7 +88,7 @@ class QueryArticles extends DataProducerPluginBase implements ContainerFactoryPl
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function resolve($offset, $limit, RefinableCacheableDependencyInterface $metadata) {
+  public function resolve($type, $offset, $limit, RefinableCacheableDependencyInterface $metadata) {
     if ($limit > static::MAX_LIMIT) {
       throw new UserError(sprintf('Exceeded maximum query limit: %s.', static::MAX_LIMIT));
     }
@@ -96,7 +99,7 @@ class QueryArticles extends DataProducerPluginBase implements ContainerFactoryPl
       ->currentRevision()
       ->accessCheck();
 
-    $query->condition($entityType->getKey('bundle'), 'article');
+    $query->condition($entityType->getKey('bundle'), $type);
     $query->range($offset, $limit);
 
     $metadata->addCacheTags($entityType->getListCacheTags());

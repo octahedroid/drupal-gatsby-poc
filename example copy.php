@@ -2,7 +2,6 @@
 
 namespace Drupal\graphql_examples\Plugin\GraphQL\Schema;
 
-use Drupal\Core\Plugin\Context\ContextDefinition;
 use Drupal\graphql\GraphQL\ResolverBuilder;
 use Drupal\graphql\GraphQL\ResolverRegistry;
 use Drupal\graphql\Plugin\GraphQL\Schema\SdlSchemaPluginBase;
@@ -22,17 +21,6 @@ class ExampleSchema extends SdlSchemaPluginBase {
   public function getResolverRegistry() {
     $builder = new ResolverBuilder();
     $registry = new ResolverRegistry();
-    
-
-      // $registry->addTypeResolver('NodeInterface', function ($value) {
-      //   if ($value instanceof NodeInterface) {
-      //     switch ($value->bundle()) {
-      //       case 'article': return 'Article';
-      //       case 'page': return 'Page';
-      //     }
-      //   }
-      //   throw new Error('Could not resolve content type.');
-      // });
 
     $this->addQueryFields($registry, $builder);
     $this->addArticleFields($registry, $builder);
@@ -72,28 +60,69 @@ class ExampleSchema extends SdlSchemaPluginBase {
     );
 
 
-  //   $registry->addFieldResolver('Article', 'description',
-  //   $builder->produce('property_path')
-  //     ->map('path', $builder->fromValue('field_description.value'))
-  //     ->map('type', $builder->fromValue('entity:node'))
-  //     ->map('value', $builder->fromParent())
-  // );
+
+
 
     $registry->addFieldResolver('Article', 'description',
-    $builder->fromPath("entity:node", "field_description.value")
+    $builder->produce('field')
+      ->map('field', $builder->fromValue('field_description'))
+      ->map('entity', $builder->fromParent())
   );
 
-    $registry->addFieldResolver('Article', 'descriptionRichText',
-    $builder->fromPath("entity:node", "field_description_rich_text.value")
+
+
+
+
+    $registry->addFieldResolver('Article', 'summaryName',
+    $builder->produce('entity_label')
+      ->map('entity', $builder->fromParent())
+      ->map('field', $builder->fromValue('field_summary'))
+  );
+    $registry->addFieldResolver('Article', 'summaryDescription',
+    $builder->produce('entity_description')
+      ->map('entity', $builder->fromParent())
+      ->map('field', $builder->fromValue('field_summary'))
+  );
+    $registry->addFieldResolver('Article', 'summaryBundle',
+    $builder->produce('entity_bundle')
+      ->map('entity', $builder->fromParent())
+      ->map('field', $builder->fromValue('field_summary'))
   );
 
 
+    $registry->addFieldResolver('Article', 'summaryRendered',
+    $builder->produce('entity_load')
+    ->map('type', $builder->fromValue('node'))
+    ->map('bundles', $builder->fromValue(['article']))
+  );
+
+
+
+    $registry->addFieldResolver('Article', 'summaryPublished',
+    $builder->produce('entity_published')
+      ->map('entity', $builder->fromParent())
+      ->map('field', $builder->fromValue('field_summary'))
+  );
+    $registry->addFieldResolver('Article', 'summaryContext',
+    $builder->produce('context')
+      ->map('entity', $builder->fromParent())
+      ->map('field', $builder->fromValue('field_summary'))
+  );
+
+
+
+    $registry->addFieldResolver('Article', 'summaryEntityLoad',
+    $builder->produce('entity_load')
+      ->map('type', $builder->fromValue("article"))
+      ->map('id', $builder->fromValue("article"))
+  );
+    $registry->addFieldResolver('Article', 'summaryPath',
+    $builder->produce('property_path')
+      ->map('entity', $builder->fromParent())
+      ->map('field', $builder->fromValue('field_summary'))
+      ->map('value', $builder->fromParent())
+  );
   }
-
-
-
-
-
 
   /**
    * @param \Drupal\graphql\GraphQL\ResolverRegistry $registry
@@ -107,10 +136,9 @@ class ExampleSchema extends SdlSchemaPluginBase {
         ->map('id', $builder->fromArgument('id'))
     );
 
-    $registry->addFieldResolver('Query', 'pages',
+    $registry->addFieldResolver('Query', 'articles',
       $builder->produce('query_articles')
         ->map('offset', $builder->fromArgument('offset'))
-        ->map('type', $builder->fromValue('page'))
         ->map('limit', $builder->fromArgument('limit'))
     );
   }
