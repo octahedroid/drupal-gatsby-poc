@@ -23,22 +23,12 @@ class ExampleSchema extends SdlSchemaPluginBase {
     $builder = new ResolverBuilder();
     $registry = new ResolverRegistry();
     
-
-      // $registry->addTypeResolver('NodeInterface', function ($value) {
-      //   if ($value instanceof NodeInterface) {
-      //     switch ($value->bundle()) {
-      //       case 'article': return 'Article';
-      //       case 'page': return 'Page';
-      //     }
-      //   }
-      //   throw new Error('Could not resolve content type.');
-      // });
-
     $this->addQueryFields($registry, $builder);
     $this->addArticleFields($registry, $builder);
+    $this->addPagesFields($registry, $builder);
 
-    // Re-usable connection type fields.
     $this->addConnectionFields('ArticleConnection', $registry, $builder);
+    $this->addConnectionFields('PageConnection', $registry, $builder);
 
     return $registry;
   }
@@ -47,6 +37,8 @@ class ExampleSchema extends SdlSchemaPluginBase {
    * @param \Drupal\graphql\GraphQL\ResolverRegistry $registry
    * @param \Drupal\graphql\GraphQL\ResolverBuilder $builder
    */
+
+
   protected function addArticleFields(ResolverRegistry $registry, ResolverBuilder $builder) {
     $registry->addFieldResolver('Article', 'id',
       $builder->produce('entity_id')
@@ -71,29 +63,31 @@ class ExampleSchema extends SdlSchemaPluginBase {
       )
     );
 
-
-  //   $registry->addFieldResolver('Article', 'description',
-  //   $builder->produce('property_path')
-  //     ->map('path', $builder->fromValue('field_description.value'))
-  //     ->map('type', $builder->fromValue('entity:node'))
-  //     ->map('value', $builder->fromParent())
-  // );
-
     $registry->addFieldResolver('Article', 'description',
-    $builder->fromPath("entity:node", "field_description.value")
-  );
+      $builder->fromPath("entity:node", "field_description.value")
+    );
 
     $registry->addFieldResolver('Article', 'descriptionRichText',
-    $builder->fromPath("entity:node", "field_description_rich_text.value")
-  );
-
-
+      $builder->fromPath("entity:node", "field_description_rich_text.value")
+    );
   }
 
 
+  protected function addPagesFields(ResolverRegistry $registry, ResolverBuilder $builder) {
+    $registry->addFieldResolver('Page', 'id',
+      $builder->produce('entity_id')
+        ->map('entity', $builder->fromParent())
+    );
 
-
-
+    $registry->addFieldResolver('Page', 'title',
+      $builder->compose(
+        $builder->produce('entity_label')
+          ->map('entity', $builder->fromParent()),
+        $builder->produce('uppercase')
+          ->map('string', $builder->fromParent())
+      )
+    );
+  }
 
   /**
    * @param \Drupal\graphql\GraphQL\ResolverRegistry $registry
@@ -111,6 +105,13 @@ class ExampleSchema extends SdlSchemaPluginBase {
       $builder->produce('query_articles')
         ->map('offset', $builder->fromArgument('offset'))
         ->map('type', $builder->fromValue('page'))
+        ->map('limit', $builder->fromArgument('limit'))
+    );
+
+    $registry->addFieldResolver('Query', 'articles',
+      $builder->produce('query_articles')
+        ->map('offset', $builder->fromArgument('offset'))
+        ->map('type', $builder->fromValue('article'))
         ->map('limit', $builder->fromArgument('limit'))
     );
   }

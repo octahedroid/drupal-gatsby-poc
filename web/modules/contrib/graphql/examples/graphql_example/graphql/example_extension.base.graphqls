@@ -1,4 +1,4 @@
-type Page {
-  id: Int!
-  title: String
-}
+# type Page {
+#   id: Int!
+#   title: String
+# }
