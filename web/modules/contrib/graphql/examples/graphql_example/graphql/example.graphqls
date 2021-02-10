@@ -12,6 +12,26 @@ type Text implements Paragraph {
   title: String
 }
 
+type HeroText implements Paragraph {
+  id: Int!
+  text: String
+  title: String
+}
+
+type Static implements Paragraph {
+  id: Int!
+  component: String
+}
+
+type CodeSnippet implements Paragraph {
+  id: Int!
+  code: String
+  hideNumbers: Boolean
+  language: String
+  text: String
+  theme: String
+}
+
 type Query {
   article(id: Int!): Article
   articles(offset: Int = 0, limit: Int = 10): ArticleConnection!
@@ -24,6 +44,7 @@ type Article {
   author: String
   description: String
   descriptionRichText: String
+  content: [Paragraph!]
 }
 
 type ArticleConnection {

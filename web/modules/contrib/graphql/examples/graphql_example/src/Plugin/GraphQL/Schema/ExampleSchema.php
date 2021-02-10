@@ -31,6 +31,9 @@ class ExampleSchema extends SdlSchemaPluginBase
     $this->addArticleFields($registry, $builder);
     $this->addPagesFields($registry, $builder);
     $this->addTextParagraphFields($registry, $builder);
+    $this->addHeroTextParagraphFields($registry, $builder);
+    $this->addStaticParagraphFields($registry, $builder);
+    $this->addCodeSnippetParagraphFields($registry, $builder);
 
     $this->addConnectionFields('ArticleConnection', $registry, $builder);
     $this->addConnectionFields('PageConnection', $registry, $builder);
@@ -86,6 +89,15 @@ class ExampleSchema extends SdlSchemaPluginBase
       'descriptionRichText',
       $builder->fromPath("entity:node", "field_description_rich_text.value")
     );
+
+    $registry->addFieldResolver(
+      'Article',
+      'content',
+      $builder->produce('entity_reference_revisions', [
+        'entity' => $builder->fromParent(),
+        'field' => $builder->fromValue('field_content'),
+      ])
+    );
   }
 
 
@@ -119,6 +131,9 @@ class ExampleSchema extends SdlSchemaPluginBase
     );
   }
 
+
+
+
   protected function addTextParagraphFields(ResolverRegistry $registry, ResolverBuilder $builder)
   {
     $registry->addFieldResolver(
@@ -140,6 +155,95 @@ class ExampleSchema extends SdlSchemaPluginBase
       $builder->fromPath("entity:node", "field_title.value")
     );
   }
+
+
+
+
+  protected function addHeroTextParagraphFields(ResolverRegistry $registry, ResolverBuilder $builder)
+  {
+    $registry->addFieldResolver(
+      'HeroText',
+      'id',
+      $builder->produce('entity_id')
+        ->map('entity', $builder->fromParent())
+    );
+
+    $registry->addFieldResolver(
+      'HeroText',
+      'text',
+      $builder->fromPath("entity:node", "field_text.value")
+    );
+
+    $registry->addFieldResolver(
+      'HeroText',
+      'title',
+      $builder->fromPath("entity:node", "field_title.value")
+    );
+  }
+
+
+
+
+  protected function addStaticParagraphFields(ResolverRegistry $registry, ResolverBuilder $builder)
+  {
+    $registry->addFieldResolver(
+      'Static',
+      'id',
+      $builder->produce('entity_id')
+        ->map('entity', $builder->fromParent())
+    );
+
+    $registry->addFieldResolver(
+      'Static',
+      'component',
+      $builder->fromPath("entity:node", "field_component.value")
+    );
+  }
+
+
+
+  protected function addCodeSnippetParagraphFields(ResolverRegistry $registry, ResolverBuilder $builder)
+  {
+    $registry->addFieldResolver(
+      'CodeSnippet',
+      'id',
+      $builder->produce('entity_id')
+        ->map('entity', $builder->fromParent())
+    );
+
+    $registry->addFieldResolver(
+      'CodeSnippet',
+      'code',
+      $builder->fromPath("entity:node", "field_code.value")
+    );
+
+    $registry->addFieldResolver(
+      'CodeSnippet',
+      'hideNumbers',
+      $builder->fromPath("entity:node", "field_hide_numbers.value")
+    );
+
+    $registry->addFieldResolver(
+      'CodeSnippet',
+      'language',
+      $builder->fromPath("entity:node", "field_language.value")
+    );
+
+    $registry->addFieldResolver(
+      'CodeSnippet',
+      'text',
+      $builder->fromPath("entity:node", "field_text.value")
+    );
+
+    $registry->addFieldResolver(
+      'CodeSnippet',
+      'theme',
+      $builder->fromPath("entity:node", "field_theme.value")
+    );
+  }
+
+
+
 
   /**
    * @param \Drupal\graphql\GraphQL\ResolverRegistry $registry
@@ -179,6 +283,12 @@ class ExampleSchema extends SdlSchemaPluginBase
         switch ($value->bundle()) {
           case 'text':
             return 'Text';
+          case 'hero_text':
+            return 'HeroText';
+          case 'static':
+            return 'Static';
+          case 'code_snippet':
+            return 'CodeSnippet';
         }
       }
       throw new Error('Could not resolve type ' . $value->bundle());
