@@ -34,6 +34,11 @@ class ExampleSchema extends SdlSchemaPluginBase
     $this->addHeroTextParagraphFields($registry, $builder);
     $this->addStaticParagraphFields($registry, $builder);
     $this->addCodeSnippetParagraphFields($registry, $builder);
+    $this->addCardParagraphFields($registry, $builder);
+    $this->addCardImageGroupParagraphFields($registry, $builder);
+    $this->addCtaParagraphFields($registry, $builder);
+    $this->addCardGroupParagraphFields($registry, $builder);
+    $this->addCardImageParagraphFields($registry, $builder);
 
     $this->addConnectionFields('ArticleConnection', $registry, $builder);
     $this->addConnectionFields('PageConnection', $registry, $builder);
@@ -132,8 +137,6 @@ class ExampleSchema extends SdlSchemaPluginBase
   }
 
 
-
-
   protected function addTextParagraphFields(ResolverRegistry $registry, ResolverBuilder $builder)
   {
     $registry->addFieldResolver(
@@ -141,6 +144,18 @@ class ExampleSchema extends SdlSchemaPluginBase
       'id',
       $builder->produce('entity_id')
         ->map('entity', $builder->fromParent())
+    );
+
+    $registry->addFieldResolver(
+      'Text',
+      'centered',
+      $builder->fromPath("entity:node", "field_centered.value")
+    );
+
+    $registry->addFieldResolver(
+      'Text',
+      'intro',
+      $builder->fromPath("entity:node", "field_intro.value")
     );
 
     $registry->addFieldResolver(
@@ -154,9 +169,14 @@ class ExampleSchema extends SdlSchemaPluginBase
       'title',
       $builder->fromPath("entity:node", "field_title.value")
     );
+
+    $registry->addFieldResolver(
+      'Text',
+      'titleAs',
+      $builder->fromPath("entity:node", "field_title_as.value")
+    );
+
   }
-
-
 
 
   protected function addHeroTextParagraphFields(ResolverRegistry $registry, ResolverBuilder $builder)
@@ -182,8 +202,6 @@ class ExampleSchema extends SdlSchemaPluginBase
   }
 
 
-
-
   protected function addStaticParagraphFields(ResolverRegistry $registry, ResolverBuilder $builder)
   {
     $registry->addFieldResolver(
@@ -199,7 +217,6 @@ class ExampleSchema extends SdlSchemaPluginBase
       $builder->fromPath("entity:node", "field_component.value")
     );
   }
-
 
 
   protected function addCodeSnippetParagraphFields(ResolverRegistry $registry, ResolverBuilder $builder)
@@ -242,6 +259,186 @@ class ExampleSchema extends SdlSchemaPluginBase
     );
   }
 
+
+  protected function addCardParagraphFields(ResolverRegistry $registry, ResolverBuilder $builder)
+  {
+    $registry->addFieldResolver(
+      'Card',
+      'id',
+      $builder->produce('entity_id')
+        ->map('entity', $builder->fromParent())
+    );
+
+    $registry->addFieldResolver('Card', 'image',
+      $builder->compose(
+        $builder->produce('property_path')
+          ->map('type', $builder->fromValue('entity:node'))
+          ->map('value', $builder->fromParent())
+          ->map('path', $builder->fromValue('field_image.target_id')),
+        $builder->produce('entity_load')
+          ->map('type', $builder->fromValue('file'))
+          ->map('id', $builder->fromParent()),
+        $builder->produce('image_derivative')
+          ->map('entity', $builder->fromParent())
+          ->map('style', $builder->fromValue('large')),
+      )
+    );
+
+    $registry->addFieldResolver(
+      'Card',
+      'intro',
+      $builder->fromPath("entity:node", "field_intro.value")
+    );
+
+    $registry->addFieldResolver(
+      'Card',
+      'link',
+      $builder->fromPath("entity:node", "field_link")
+    );
+
+    $registry->addFieldResolver(
+      'Card',
+      'text',
+      $builder->fromPath("entity:node", "field_text.value")
+    );
+
+    $registry->addFieldResolver(
+      'Card',
+      'title',
+      $builder->fromPath("entity:node", "field_title.value")
+    );
+
+    
+  }
+
+
+
+  protected function addCardImageGroupParagraphFields(ResolverRegistry $registry, ResolverBuilder $builder)
+  {
+    $registry->addFieldResolver(
+      'CardImageGroup',
+      'id',
+      $builder->produce('entity_id')
+        ->map('entity', $builder->fromParent())
+    );
+
+    $registry->addFieldResolver(
+      'CardImageGroup',
+      'cards',
+      $builder->produce('entity_reference', [
+        'entity' => $builder->fromParent(),
+        'field' => $builder->fromValue('field_cards'),
+      ])
+    );
+
+    $registry->addFieldResolver(
+      'CardImageGroup',
+      'columns',
+      $builder->fromPath("entity:node", "field_columns.value")
+    );
+
+    $registry->addFieldResolver(
+      'CardImageGroup',
+      'title',
+      $builder->fromPath("entity:node", "field_title.value")
+    );
+  }
+
+
+  protected function addCtaParagraphFields(ResolverRegistry $registry, ResolverBuilder $builder)
+  {
+    $registry->addFieldResolver(
+      'CTA',
+      'id',
+      $builder->produce('entity_id')
+        ->map('entity', $builder->fromParent())
+    );
+    $registry->addFieldResolver(
+      'CTA',
+      'isDark',
+      $builder->fromPath("entity:node", "field_dark.value")
+    );
+    $registry->addFieldResolver(
+      'CTA',
+      'intro',
+      $builder->fromPath("entity:node", "field_intro.value")
+    );
+    $registry->addFieldResolver(
+      'CTA',
+      'title',
+      $builder->fromPath("entity:node", "field_title.value")
+    );
+    $registry->addFieldResolver(
+      'CTA',
+      'url',
+      $builder->fromPath("entity:node", "field_link")
+    );
+  }
+
+
+  protected function addCardGroupParagraphFields(ResolverRegistry $registry, ResolverBuilder $builder)
+  {
+    $registry->addFieldResolver(
+      'CardGroup',
+      'id',
+      $builder->produce('entity_id')
+        ->map('entity', $builder->fromParent())
+    );
+    $registry->addFieldResolver(
+      'CardGroup',
+      'cards',
+      $builder->produce('entity_reference_revisions', [
+        'entity' => $builder->fromParent(),
+        'field' => $builder->fromValue('field_cards'),
+      ])
+    );
+    $registry->addFieldResolver(
+      'CardGroup',
+      'centered',
+      $builder->fromPath("entity:node", "field_centered.value")
+    );
+    $registry->addFieldResolver(
+      'CardGroup',
+      'columns',
+      $builder->fromPath("entity:node", "field_columns.value")
+    );
+    $registry->addFieldResolver(
+      'CardGroup',
+      'cta',
+      $builder->fromPath("entity:node", "field_cta.value")
+    );
+    $registry->addFieldResolver(
+      'CardGroup',
+      'title',
+      $builder->fromPath("entity:node", "field_title.value")
+    );
+  }
+
+
+  protected function addCardImageParagraphFields(ResolverRegistry $registry, ResolverBuilder $builder)
+  {
+    $registry->addFieldResolver(
+      'CardImage',
+      'id',
+      $builder->produce('entity_id')
+        ->map('entity', $builder->fromParent())
+    );
+    
+    $registry->addFieldResolver('CardImage', 'image',
+      $builder->compose(
+        $builder->produce('property_path')
+          ->map('type', $builder->fromValue('entity:node'))
+          ->map('value', $builder->fromParent())
+          ->map('path', $builder->fromValue('field_image.target_id')),
+        $builder->produce('entity_load')
+          ->map('type', $builder->fromValue('file'))
+          ->map('id', $builder->fromParent()),
+        $builder->produce('image_derivative')
+          ->map('entity', $builder->fromParent())
+          ->map('style', $builder->fromValue('large')),
+      )
+    );
+  }
 
 
 
@@ -289,6 +486,16 @@ class ExampleSchema extends SdlSchemaPluginBase
             return 'Static';
           case 'code_snippet':
             return 'CodeSnippet';
+          case 'card':
+            return 'Card';
+          case 'card_image_group':
+            return 'CardImageGroup';
+          case 'cta':
+            return 'CTA';
+          case 'card_group':
+            return 'CardGroup';
+          case 'card_image':
+            return 'CardImage';
         }
       }
       throw new Error('Could not resolve type ' . $value->bundle());

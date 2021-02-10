@@ -2,13 +2,52 @@ schema {
   query: Query
 }
 
+scalar Image
+scalar Link
+
 interface Paragraph {
   id: Int!
 }
 
+type Query {
+  article(id: Int!): Article
+  articles(offset: Int = 0, limit: Int = 10): ArticleConnection!
+  pages(offset: Int = 0, limit: Int = 10): PageConnection!
+}
+
+type Card implements Paragraph {
+  id: Int!
+  image: Image
+  intro: String
+  link: Link
+  text: String
+  title: String
+}
+
+type CTA implements Paragraph {
+  id: Int!
+  isDark: Boolean
+  intro: String
+  url: Link
+  # text: RichText
+  title: String
+}
+
 type Text implements Paragraph {
   id: Int!
+  centered: Boolean
+  intro: String
   text: String
+  title: String
+  titleAs: String
+}
+
+type CardGroup implements Paragraph {
+  id: Int!
+  cards: [Card]
+  centered: Boolean
+  columns: String
+  cta: Boolean
   title: String
 }
 
@@ -32,10 +71,16 @@ type CodeSnippet implements Paragraph {
   theme: String
 }
 
-type Query {
-  article(id: Int!): Article
-  articles(offset: Int = 0, limit: Int = 10): ArticleConnection!
-  pages(offset: Int = 0, limit: Int = 10): PageConnection!
+type CardImageGroup implements Paragraph {
+  id: Int!
+  cards: [Card]
+  columns: Int
+  title: String
+}
+
+type CardImage implements Paragraph {
+  id: Int!
+  image: Image
 }
 
 type Article {
