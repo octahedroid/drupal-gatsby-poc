@@ -26,6 +26,7 @@ class ExampleSchema extends SdlSchemaPluginBase {
     $this->addQueryFields($registry, $builder);
     $this->addArticleFields($registry, $builder);
     $this->addPagesFields($registry, $builder);
+    $this->addTextParagraphFields($registry, $builder);
 
     $this->addConnectionFields('ArticleConnection', $registry, $builder);
     $this->addConnectionFields('PageConnection', $registry, $builder);
@@ -87,6 +88,29 @@ class ExampleSchema extends SdlSchemaPluginBase {
           ->map('string', $builder->fromParent())
       )
     );
+
+    $registry->addFieldResolver('Page', 'content',
+    $builder->produce('entity_reference_revisions', [
+        'entity' => $builder->fromParent(),
+        'field' => $builder->fromValue('field_content'),
+    ])
+  );
+  }
+
+  protected function addTextParagraphFields(ResolverRegistry $registry, ResolverBuilder $builder) {
+    $registry->addFieldResolver('Text', 'id',
+      $builder->produce('entity_id')
+        ->map('entity', $builder->fromParent())
+    );
+    
+    $registry->addFieldResolver('Text', 'text',
+      $builder->fromPath("entity:node", "field_text.value")
+    );
+
+    $registry->addFieldResolver('Text', 'title',
+      $builder->fromPath("entity:node", "field_title.value")
+    );
+  
   }
 
   /**
