@@ -41,6 +41,7 @@ class ParagraphResolvers extends SdlSchemaExtensionPluginBase
     $this->addCardGroupParagraphFields($registry, $builder);
     $this->addCardImageParagraphFields($registry, $builder);
     $this->addHeroCtaParagraphFields($registry, $builder);
+    $this->addFromLibraryParagraphFields($registry, $builder);
   }
 
 
@@ -422,7 +423,27 @@ class ParagraphResolvers extends SdlSchemaExtensionPluginBase
       $builder->fromPath("entity:node", "field_link")
     );
 
+  }
 
+
+
+  protected function addFromLibraryParagraphFields(ResolverRegistryInterface $registry, ResolverBuilder $builder)
+  {
+    $registry->addFieldResolver(
+      'FromLibrary',
+      'id',
+      $builder->produce('entity_id')
+        ->map('entity', $builder->fromParent())
+    );
+
+    $registry->addFieldResolver(
+      'FromLibrary',
+      'reusableParagraph',
+      $builder->produce('entity_reference', [
+        'entity' => $builder->fromParent(),
+        'field' => $builder->fromValue('field_reusable_paragraph'),
+      ])
+    );
 
   }
 
@@ -457,6 +478,8 @@ class ParagraphResolvers extends SdlSchemaExtensionPluginBase
             return 'CardImage';
           case 'hero_cta':
             return 'HeroCta';
+          case 'from_library':
+            return 'FromLibrary';
         }
       }
       throw new Error('Could not resolve type ' . $value->bundle());

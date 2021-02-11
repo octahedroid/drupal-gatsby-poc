@@ -54,6 +54,11 @@ type Static implements Paragraph {
   component: String
 }
 
+type FromLibrary implements Paragraph {
+  id: Int!
+  reusableParagraph: [LibraryItem]
+}
+
 type CodeSnippet implements Paragraph {
   id: Int!
   code: String

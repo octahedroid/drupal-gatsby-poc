@@ -31,6 +31,7 @@ class BaseResolvers extends SdlSchemaPluginBase
     $this->addArticleFields($registry, $builder);
     $this->addPagesFields($registry, $builder);
     $this->addFormattedTextFields($registry, $builder);
+    $this->addLibraryItem($registry, $builder);
     $this->addConnectionFields('ArticleConnection', $registry, $builder);
     $this->addConnectionFields('PageConnection', $registry, $builder);
 
@@ -147,6 +148,33 @@ class BaseResolvers extends SdlSchemaPluginBase
       'processed',
       $builder->produce('field_processed')
         ->map('text', $builder->fromParent())
+    );
+  }
+
+
+  protected function addLibraryItem(ResolverRegistry $registry, ResolverBuilder $builder)
+  {
+    $registry->addFieldResolver(
+      'LibraryItem',
+      'id',
+      $builder->produce('entity_id')
+        ->map('entity', $builder->fromParent())
+    );
+    
+    $registry->addFieldResolver(
+      'LibraryItem',
+      'label',
+      $builder->produce('entity_label')
+        ->map('entity', $builder->fromParent())
+    );
+
+    $registry->addFieldResolver(
+      'LibraryItem',
+      'paragraphs',
+      $builder->produce('entity_reference_revisions', [
+        'entity' => $builder->fromParent(),
+        'field' => $builder->fromValue('paragraphs'),
+      ])
     );
   }
 

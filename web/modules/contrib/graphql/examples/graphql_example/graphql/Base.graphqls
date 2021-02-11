@@ -46,3 +46,9 @@ type PageConnection {
   total: Int!
   items: [Page!]
 }
+
+type LibraryItem {
+  id: Int!
+  label: String
+  paragraphs: [Paragraph!]
+}

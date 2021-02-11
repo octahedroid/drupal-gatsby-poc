@@ -44,7 +44,6 @@ class FieldProcessed extends DataProducerPluginBase
     $raw = $text->value;
     $format = $text->format;
 
-    $order = array("\r\n", "\n", "\r");
-    return str_replace($order, "", check_markup($raw, $format));
+    return str_replace("\n", "", check_markup($raw, $format));
   }
 }
