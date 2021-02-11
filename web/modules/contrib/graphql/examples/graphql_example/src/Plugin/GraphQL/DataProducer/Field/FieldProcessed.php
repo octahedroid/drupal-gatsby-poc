@@ -2,9 +2,8 @@
 
 namespace Drupal\graphql_examples\Plugin\GraphQL\DataProducer\Field;
 
-use DOMDocument;
-use Drupal\Component\Utility\Html;
 use Drupal\graphql\Plugin\GraphQL\DataProducer\DataProducerPluginBase;
+use Entity;
 
 /**
  * Produces a field instance from an entity.
@@ -21,7 +20,7 @@ use Drupal\graphql\Plugin\GraphQL\DataProducer\DataProducerPluginBase;
  *     label = @Translation("Field")
  *   ),
  *   consumes = {
- *     "value" = @ContextDefinition("string",
+ *     "text" = @ContextDefinition("string",
  *       label = @Translation("Field name")
  *     )
  *   }
@@ -33,17 +32,19 @@ class FieldProcessed extends DataProducerPluginBase
   /**
    * Processes the text field
    *
-   * @param string $value
+   * @param object $text
    *   The value to be processed
    *
    * @return string 
    *   A field item list if the field exists or null if the entity is not
    *   fieldable or doesn't have the requested field.
    */
-  public function resolve(string $value)
+  public function resolve(object $text)
   {
-    $doc = Html::load($value);
+    $raw = $text->value;
+    $format = $text->format;
 
-    return  HTML::serialize($doc);
+    $order = array("\r\n", "\n", "\r");
+    return str_replace($order, "", check_markup($raw, $format));
   }
 }

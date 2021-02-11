@@ -145,11 +145,8 @@ class BaseResolvers extends SdlSchemaPluginBase
     $registry->addFieldResolver(
       'FormattedText',
       'processed',
-      $builder->compose(
-        $builder->fromPath('text', 'value'),
-        $builder->produce('field_processed')
-          ->map('value', $builder->fromParent())
-      )
+      $builder->produce('field_processed')
+        ->map('text', $builder->fromParent())
     );
   }
 
