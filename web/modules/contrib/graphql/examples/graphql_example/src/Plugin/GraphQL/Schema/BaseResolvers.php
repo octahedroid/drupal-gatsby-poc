@@ -12,7 +12,7 @@ use Drupal\paragraphs\Entity\Paragraph;
 
 /**
  * @Schema(
- *   id = "example",
+ *   id = "Base",
  *   name = "Base Resolvers"
  * )
  */
@@ -30,6 +30,7 @@ class BaseResolvers extends SdlSchemaPluginBase
     $this->addQueryFields($registry, $builder);
     $this->addArticleFields($registry, $builder);
     $this->addPagesFields($registry, $builder);
+    $this->addFormattedTextFields($registry, $builder);
     $this->addConnectionFields('ArticleConnection', $registry, $builder);
     $this->addConnectionFields('PageConnection', $registry, $builder);
 
@@ -125,6 +126,33 @@ class BaseResolvers extends SdlSchemaPluginBase
       ])
     );
   }
+
+
+  protected function addFormattedTextFields(ResolverRegistry $registry, ResolverBuilder $builder)
+  {
+    $registry->addFieldResolver(
+      'FormattedText',
+      'format',
+      $builder->fromPath('text', 'format')
+    );
+
+    $registry->addFieldResolver(
+      'FormattedText',
+      'raw',
+      $builder->fromPath('text', 'value')
+    );
+
+    $registry->addFieldResolver(
+      'FormattedText',
+      'processed',
+      $builder->compose(
+        $builder->fromPath('text', 'value'),
+        $builder->produce('field_processed')
+          ->map('value', $builder->fromParent())
+      )
+    );
+  }
+
   /**
    * @param \Drupal\graphql\GraphQL\ResolverRegistry $registry
    * @param \Drupal\graphql\GraphQL\ResolverBuilder $builder

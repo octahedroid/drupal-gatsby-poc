@@ -3,7 +3,7 @@ type Card implements Paragraph {
   image: Image
   intro: String
   link: Link
-  text: String
+  text: FormattedText
   title: String
 }
 
@@ -12,7 +12,7 @@ type CTA implements Paragraph {
   isDark: Boolean
   intro: String
   url: Link
-  # text: RichText
+  text: FormattedText
   title: String
 }
 
@@ -20,7 +20,7 @@ type Text implements Paragraph {
   id: Int!
   centered: Boolean
   intro: String
-  text: String
+  text: FormattedText
   title: String
   titleAs: String
 }
@@ -34,9 +34,18 @@ type CardGroup implements Paragraph {
   title: String
 }
 
+type HeroCta implements Paragraph {
+  id: Int!
+  title: String
+  intro: String
+  image: Image
+  link: Link
+  text: FormattedText
+}
+
 type HeroText implements Paragraph {
   id: Int!
-  text: String
+  text: FormattedText
   title: String
 }
 
@@ -50,7 +59,7 @@ type CodeSnippet implements Paragraph {
   code: String
   hideNumbers: Boolean
   language: String
-  text: String
+  text: FormattedText
   theme: String
 }
 

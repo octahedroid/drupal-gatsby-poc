@@ -16,6 +16,12 @@ type Query {
   page(id: Int!): Page
 }
 
+type FormattedText {
+  format: String
+  raw: String
+  processed: String
+}
+
 type Article {
   id: Int!
   title: String!

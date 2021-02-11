@@ -14,10 +14,10 @@ use Drupal\paragraphs\Entity\Paragraph;
 
 /**
  * @SchemaExtension(
- *   id = "ParagraphResolvers",
- *   name = "Example extension",
+ *   id = "Paragraph",
+ *   name = "Paragraph extension",
  *   description = "A simple extension that adds node related fields.",
- *   schema = "example"
+ *   schema = "Base"
  * )
  */
 class ParagraphResolvers extends SdlSchemaExtensionPluginBase
@@ -40,6 +40,7 @@ class ParagraphResolvers extends SdlSchemaExtensionPluginBase
     $this->addCtaParagraphFields($registry, $builder);
     $this->addCardGroupParagraphFields($registry, $builder);
     $this->addCardImageParagraphFields($registry, $builder);
+    $this->addHeroCtaParagraphFields($registry, $builder);
   }
 
 
@@ -72,7 +73,9 @@ class ParagraphResolvers extends SdlSchemaExtensionPluginBase
     $registry->addFieldResolver(
       'Text',
       'text',
-      $builder->fromPath("entity:node", "field_text.value")
+      $builder->produce('field')
+        ->map('entity', $builder->fromParent())
+        ->map('field', $builder->fromValue('field_text'))
     );
 
     $registry->addFieldResolver(
@@ -102,7 +105,9 @@ class ParagraphResolvers extends SdlSchemaExtensionPluginBase
     $registry->addFieldResolver(
       'HeroText',
       'text',
-      $builder->fromPath("entity:node", "field_text.value")
+      $builder->produce('field')
+        ->map('entity', $builder->fromParent())
+        ->map('field', $builder->fromValue('field_text'))
     );
 
     $registry->addFieldResolver(
@@ -160,7 +165,9 @@ class ParagraphResolvers extends SdlSchemaExtensionPluginBase
     $registry->addFieldResolver(
       'CodeSnippet',
       'text',
-      $builder->fromPath("entity:node", "field_text.value")
+      $builder->produce('field')
+        ->map('entity', $builder->fromParent())
+        ->map('field', $builder->fromValue('field_text'))
     );
 
     $registry->addFieldResolver(
@@ -210,7 +217,9 @@ class ParagraphResolvers extends SdlSchemaExtensionPluginBase
     $registry->addFieldResolver(
       'Card',
       'text',
-      $builder->fromPath("entity:node", "field_text.value")
+      $builder->produce('field')
+        ->map('entity', $builder->fromParent())
+        ->map('field', $builder->fromValue('field_text'))
     );
 
     $registry->addFieldResolver(
@@ -284,6 +293,13 @@ class ParagraphResolvers extends SdlSchemaExtensionPluginBase
       'url',
       $builder->fromPath("entity:node", "field_link")
     );
+    $registry->addFieldResolver(
+      'CTA',
+      'text',
+      $builder->produce('field')
+        ->map('entity', $builder->fromParent())
+        ->map('field', $builder->fromValue('field_text'))
+    );
   }
 
 
@@ -350,7 +366,67 @@ class ParagraphResolvers extends SdlSchemaExtensionPluginBase
       )
     );
   }
-  
+
+
+
+
+  protected function addHeroCtaParagraphFields(ResolverRegistryInterface $registry, ResolverBuilder $builder)
+  {
+    $registry->addFieldResolver(
+      'HeroCta',
+      'id',
+      $builder->produce('entity_id')
+        ->map('entity', $builder->fromParent())
+    );
+
+    $registry->addFieldResolver(
+      'HeroCta',
+      'title',
+      $builder->fromPath("entity:node", "field_title.value")
+    );
+
+    $registry->addFieldResolver(
+      'HeroCta',
+      'intro',
+      $builder->fromPath("entity:node", "field_intro.value")
+    );
+
+    $registry->addFieldResolver(
+      'HeroCta',
+      'text',
+      $builder->produce('field')
+        ->map('entity', $builder->fromParent())
+        ->map('field', $builder->fromValue('field_text'))
+    );
+
+
+    $registry->addFieldResolver('HeroCta', 'image',
+      $builder->compose(
+        $builder->produce('property_path')
+          ->map('type', $builder->fromValue('entity:node'))
+          ->map('value', $builder->fromParent())
+          ->map('path', $builder->fromValue('field_image.target_id')),
+        $builder->produce('entity_load')
+          ->map('type', $builder->fromValue('file'))
+          ->map('id', $builder->fromParent()),
+        $builder->produce('image_derivative')
+          ->map('entity', $builder->fromParent())
+          ->map('style', $builder->fromValue('large')),
+      )
+    );
+
+
+    $registry->addFieldResolver(
+      'HeroCta',
+      'link',
+      $builder->fromPath("entity:node", "field_link")
+    );
+
+
+
+  }
+
+
   /**
    * @param \Drupal\graphql\GraphQL\ResolverRegistryInterface $registry
    * @param \Drupal\graphql\GraphQL\ResolverBuilder $builder
@@ -379,6 +455,8 @@ class ParagraphResolvers extends SdlSchemaExtensionPluginBase
             return 'CardGroup';
           case 'card_image':
             return 'CardImage';
+          case 'hero_cta':
+            return 'HeroCta';
         }
       }
       throw new Error('Could not resolve type ' . $value->bundle());
