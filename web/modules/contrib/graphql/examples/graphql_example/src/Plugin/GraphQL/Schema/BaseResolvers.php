@@ -195,6 +195,15 @@ class BaseResolvers extends SdlSchemaPluginBase
 
     $registry->addFieldResolver(
       'Query',
+      'page',
+      $builder->produce('entity_load')
+        ->map('type', $builder->fromValue('node'))
+        ->map('bundles', $builder->fromValue(['page']))
+        ->map('id', $builder->fromArgument('id'))
+    );
+
+    $registry->addFieldResolver(
+      'Query',
       'pages',
       $builder->produce('query_base')
         ->map('offset', $builder->fromArgument('offset'))
