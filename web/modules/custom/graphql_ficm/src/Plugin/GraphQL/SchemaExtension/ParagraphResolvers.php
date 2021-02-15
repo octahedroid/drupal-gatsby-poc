@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\graphql_examples\Plugin\GraphQL\SchemaExtension;
+namespace Drupal\graphql_ficm_core\Plugin\GraphQL\SchemaExtension;
 
 use Drupal\Core\Plugin\Context\ContextDefinition;
 use Drupal\graphql\GraphQL\ResolverBuilder;
@@ -8,7 +8,7 @@ use Drupal\graphql\GraphQL\ResolverBuilder;
 use Drupal\graphql\GraphQL\ResolverRegistryInterface;
 // use Drupal\graphql\Plugin\GraphQL\Schema\SdlSchemaPluginBase;
 use Drupal\graphql\Plugin\GraphQL\SchemaExtension\SdlSchemaExtensionPluginBase;
-use Drupal\graphql_examples\Wrappers\QueryConnection;
+use Drupal\graphql_ficm_core\Wrappers\QueryConnection;
 use GraphQL\Error\Error;
 use Drupal\paragraphs\Entity\Paragraph;
 

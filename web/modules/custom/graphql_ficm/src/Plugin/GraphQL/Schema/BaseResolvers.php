@@ -1,12 +1,12 @@
 <?php
 
-namespace Drupal\graphql_examples\Plugin\GraphQL\Schema;
+namespace Drupal\graphql_ficm_core\Plugin\GraphQL\Schema;
 
 use Drupal\Core\Plugin\Context\ContextDefinition;
 use Drupal\graphql\GraphQL\ResolverBuilder;
 use Drupal\graphql\GraphQL\ResolverRegistry;
 use Drupal\graphql\Plugin\GraphQL\Schema\SdlSchemaPluginBase;
-use Drupal\graphql_examples\Wrappers\QueryConnection;
+use Drupal\graphql_ficm_core\Wrappers\QueryConnection;
 use GraphQL\Error\Error;
 use Drupal\paragraphs\Entity\Paragraph;
 

@@ -1,6 +1,6 @@
-name: GraphQL examples
+name: GraphQL FICM
 type: module
-description: 'Examples for the GraphQL module.'
+description: 'GraphQL FICM Core module.'
 package: GraphQL
 core: 8.x
 dependencies:

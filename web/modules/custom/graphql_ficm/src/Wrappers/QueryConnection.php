@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\graphql_examples\Wrappers;
+namespace Drupal\graphql_ficm_core\Wrappers;
 
 use Drupal\Core\Entity\Query\QueryInterface;
 use GraphQL\Deferred;

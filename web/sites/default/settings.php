@@ -4,7 +4,6 @@
  * Load services definition file.
  */
 $settings['container_yamls'][] = __DIR__ . '/services.yml';
-$config['system.logging']['error_level'] = 'verbose';
 
 /**
  * Include the Pantheon-specific settings file.

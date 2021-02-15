@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\graphql_examples\Plugin\GraphQL\DataProducer\Field;
+namespace Drupal\graphql_ficm_core\Plugin\GraphQL\DataProducer\Field;
 
 use Drupal\graphql\Plugin\GraphQL\DataProducer\DataProducerPluginBase;
 use Entity;
