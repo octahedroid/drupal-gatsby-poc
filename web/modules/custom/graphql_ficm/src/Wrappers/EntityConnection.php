@@ -5,6 +5,7 @@ namespace Drupal\graphql_ficm_core\Wrappers;
 use Drupal\graphql_ficm_core\Wrappers\EdgeInterface;
 use GraphQL\Error\UserError;
 use GraphQL\Executor\Promise\Adapter\SyncPromise;
+use Drupal\graphql_ficm_core\Wrappers\QueryHelper;
 
 class EntityConnection implements ConnectionInterface
 {
@@ -16,34 +17,35 @@ class EntityConnection implements ConnectionInterface
 
   /**
    * The provided query for the connection
+   * @var Drupal\graphql_ficm_core\Wrappers\QueryHelper
    */
-  protected QueryHelper $queryHelper;
+  protected $queryHelper;
 
   /**
    * Fetch N results
    */
-  protected ?int $limit = NULL;
+  protected $limit = NULL;
 
   /**
    * Cursor reference point for the results
    */
-  protected ?string $from = NULL;
+  protected $from = NULL;
 
   /**
    * Reverse the sorting order of the requests
    */
-  protected bool $reverseSort = FALSE;
+  protected $reverseSort = FALSE;
 
   /**
    * Reverse the direction of nodes to take starting from 
    * the cursor (next N nodes or previous N nodes)
    */
-  protected bool $reverseDirection = FALSE;
+  protected $reverseDirection = FALSE;
 
   /**
    * The result set of the conection
    */
-  protected ?SyncPromise $result;
+  protected $result;
 
   /**
    * Create a new Entity Connection with pagination
@@ -58,7 +60,7 @@ class EntityConnection implements ConnectionInterface
   /**
    * {@inheritdoc}
    */
-  public function setPagination(int $limit, string $from, bool $reverseSort, bool $reverseDirection): self
+  public function setPagination(int $limit, ?string $from, bool $reverseSort, bool $reverseDirection)
   {
     // Disallow changing pagination after a query has been performed because the
     // way we treat the results depends on it.
@@ -248,10 +250,14 @@ class EntityConnection implements ConnectionInterface
   {
     return $this->getTrimmedResult()
       ->then(
-        static fn ($edges) => array_map(
-          static fn (EdgeInterface $edge) => $edge->getNode(),
-          $edges
-        )
+        static function ($edges) {
+          return array_map(
+            static function (EdgeInterface $edge) {
+              return $edge->getNode();
+            },
+            $edges
+          );
+        }
       );
   }
 }

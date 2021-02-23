@@ -160,7 +160,7 @@ class BaseResolvers extends SdlSchemaPluginBase
       $builder->produce('entity_id')
         ->map('entity', $builder->fromParent())
     );
-    
+
     $registry->addFieldResolver(
       'LibraryItem',
       'label',
@@ -200,6 +200,18 @@ class BaseResolvers extends SdlSchemaPluginBase
         ->map('type', $builder->fromValue('node'))
         ->map('bundles', $builder->fromValue(['page']))
         ->map('id', $builder->fromArgument('id'))
+    );
+
+    $registry->addFieldResolver(
+      'Query',
+      'nodes',
+      $builder->produce('generic_query')
+        ->map('limit', $builder->fromArgument('limit'))
+        ->map('from', $builder->fromArgument('from'))
+        ->map('reverseSort', $builder->fromArgument('reverseSort'))
+        ->map('reverseDirection', $builder->fromArgument('reverseDirection'))
+        ->map('sortKey', $builder->fromArgument('sortKey'))
+        ->map('type', $builder->fromValue('node'))
     );
 
     $registry->addFieldResolver(

@@ -13,6 +13,30 @@ use Exception;
  */
 class QueryHelper
 {
+
+  /**
+   * The Drupal entity type manager, provided from the plugin's
+   * container
+   * 
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+
+  /**
+   * The field that is used for sorting the query results
+   * 
+   * @var string
+   */
+  protected $sortKey;
+
+  /**
+   * The field that is used for storing the entities' internal type 
+   * 
+   * @var string
+   */
+  protected $internalType;
+
   /**
    * TODO: better code
    */
@@ -32,28 +56,6 @@ class QueryHelper
     ];
   }
 
-  /**
-   * The Drupal entity type manager, provided from the plugin's
-   * container
-   * 
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
-   */
-  protected EntityTypeManagerInterface $entityTypeManager;
-
-
-  /**
-   * The field that is used for sorting the query results
-   * 
-   * @var string
-   */
-  protected string $sortKey;
-
-  /**
-   * The field that is used for storing the entities' internal type 
-   * 
-   * @var string
-   */
-  protected string $internalType;
 
   public function __construct(EntityTypeManagerInterface $entityTypeManager, string $internalType, string $sortKey)
   {
@@ -104,7 +106,9 @@ class QueryHelper
   public function getLoaderPromise(array $result): SyncPromise
   {
     // Empty callback in there are no resulsts
-    $callback = static fn () => [];
+    $callback = static function () {
+      return [];
+    };
 
     //Use buffer if there are results
     if (!empty($result)) {
@@ -115,10 +119,12 @@ class QueryHelper
     return new Deferred(
       function () use ($callback) {
         return array_map(
-          fn ($entity) => new Edge(
-            $entity,
-            new Cursor($this->internalType, $entity->id(), $this->sortKey, $this->getSortValue($entity))
-          ),
+          function ($entity) {
+            return new Edge(
+              $entity,
+              new Cursor($this->internalType, $entity->id(), $this->sortKey, $this->getSortValue($entity))
+            );
+          },
           $callback()
         );
       }

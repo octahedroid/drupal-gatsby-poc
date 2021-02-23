@@ -29,7 +29,7 @@ interface ConnectionInterface
    * @return $this
    * 
    */
-  public function setPagination(int $limit, string $from, ?bool $reverseSort, ?bool $reverseDirection): self;
+  public function setPagination(int $limit, ?string $from, bool $reverseSort, bool $reverseDirection);
 
 
   /**

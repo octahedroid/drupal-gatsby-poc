@@ -6,7 +6,9 @@ use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
 use Drupal\graphql_ficm_core\Wrappers\QueryHelper;
 use Drupal\graphql\Plugin\GraphQL\DataProducer\DataProducerPluginBase;
 use Drupal\graphql_ficm_core\Wrappers\EntityConnection;
-
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * A generic Data Producer for entities.
@@ -23,7 +25,7 @@ use Drupal\graphql_ficm_core\Wrappers\EntityConnection;
  *     ),
  *     "limit" = @ContextDefinition("integer",
  *       label = @Translation("The amount of entries to fetch"),
- *       required = FALSE
+ *       required = FALSE,
  *       default_value = 10
  *     ),
  *     "from" = @ContextDefinition("string",
@@ -48,8 +50,15 @@ use Drupal\graphql_ficm_core\Wrappers\EntityConnection;
  *   }
  * )
  */
-class QueryUser extends DataProducerPluginBase
+class GenericQuery extends DataProducerPluginBase implements ContainerFactoryPluginInterface
 {
+
+  /**
+   * The entity type manager service.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
 
   /**
    * Resolves the request to the requested values.
@@ -82,6 +91,31 @@ class QueryUser extends DataProducerPluginBase
 
     $connection = new EntityConnection($queryHelper);
     $connection->setPagination($limit, $from, $reverseSort, $reverseDirection);
+
     return $connection;
+  }
+
+
+  public function __construct(
+    array $configuration,
+    $pluginId,
+    array $pluginDefinition,
+    EntityTypeManagerInterface $entityTypeManager
+  ) {
+    parent::__construct($configuration, $pluginId, $pluginDefinition);
+    $this->entityTypeManager = $entityTypeManager;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition)
+  {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('entity_type.manager')
+    );
   }
 }
