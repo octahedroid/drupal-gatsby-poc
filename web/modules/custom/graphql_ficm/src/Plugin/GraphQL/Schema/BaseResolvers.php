@@ -2,13 +2,10 @@
 
 namespace Drupal\graphql_ficm_core\Plugin\GraphQL\Schema;
 
-use Drupal\Core\Plugin\Context\ContextDefinition;
 use Drupal\graphql\GraphQL\ResolverBuilder;
 use Drupal\graphql\GraphQL\ResolverRegistry;
 use Drupal\graphql\Plugin\GraphQL\Schema\SdlSchemaPluginBase;
 use Drupal\graphql_ficm_core\Wrappers\QueryConnection;
-use GraphQL\Error\Error;
-use Drupal\paragraphs\Entity\Paragraph;
 
 /**
  * @Schema(
@@ -32,8 +29,8 @@ class BaseResolvers extends SdlSchemaPluginBase
     $this->addPagesFields($registry, $builder);
     $this->addFormattedTextFields($registry, $builder);
     $this->addLibraryItem($registry, $builder);
-    $this->addConnectionFields('ArticleConnection', $registry, $builder);
-    $this->addConnectionFields('PageConnection', $registry, $builder);
+    $this->addConnectionFields('Article', $registry, $builder);
+    $this->addConnectionFields('Page', $registry, $builder);
 
     return $registry;
   }
@@ -184,6 +181,42 @@ class BaseResolvers extends SdlSchemaPluginBase
    */
   protected function addQueryFields(ResolverRegistry $registry, ResolverBuilder $builder)
   {
+    // Connection fields.
+    $registry->addFieldResolver(
+      'Connection',
+      'edges',
+      $builder->produce('connection_edges')
+        ->map('connection', $builder->fromParent())
+    );
+
+    $registry->addFieldResolver(
+      'Connection',
+      'nodes',
+      $builder->produce('connection_nodes')
+        ->map('connection', $builder->fromParent())
+    );
+
+    $registry->addFieldResolver(
+      'Connection',
+      'pageInfo',
+      $builder->produce('connection_page_info')
+        ->map('connection', $builder->fromParent())
+    );
+
+    // Edge fields.
+    $registry->addFieldResolver(
+      'Edge',
+      'cursor',
+      $builder->produce('edge_cursor')
+        ->map('edge', $builder->fromParent())
+    );
+    $registry->addFieldResolver(
+      'Edge',
+      'node',
+      $builder->produce('edge_node')
+        ->map('edge', $builder->fromParent())
+    );
+
     $registry->addFieldResolver(
       'Query',
       'article',
@@ -226,10 +259,13 @@ class BaseResolvers extends SdlSchemaPluginBase
     $registry->addFieldResolver(
       'Query',
       'articles',
-      $builder->produce('query_base')
-        ->map('offset', $builder->fromArgument('offset'))
-        ->map('type', $builder->fromValue('article'))
+      $builder->produce('generic_query')
         ->map('limit', $builder->fromArgument('limit'))
+        ->map('from', $builder->fromArgument('from'))
+        ->map('reverseSort', $builder->fromArgument('reverseSort'))
+        ->map('reverseDirection', $builder->fromArgument('reverseDirection'))
+        ->map('sortKey', $builder->fromArgument('sortKey'))
+        ->map('type', $builder->fromValue('node'))
     );
   }
 
@@ -240,20 +276,40 @@ class BaseResolvers extends SdlSchemaPluginBase
    */
   protected function addConnectionFields($type, ResolverRegistry $registry, ResolverBuilder $builder)
   {
+    // Connection fields.
     $registry->addFieldResolver(
-      $type,
-      'total',
-      $builder->callback(function (QueryConnection $connection) {
-        return $connection->total();
-      })
+      $type . 'Connection',
+      'edges',
+      $builder->produce('connection_edges')
+        ->map('connection', $builder->fromParent())
     );
 
     $registry->addFieldResolver(
-      $type,
-      'items',
-      $builder->callback(function (QueryConnection $connection) {
-        return $connection->items();
-      })
+      $type . 'Connection',
+      'nodes',
+      $builder->produce('connection_nodes')
+        ->map('connection', $builder->fromParent())
+    );
+
+    $registry->addFieldResolver(
+      $type . 'Connection',
+      'pageInfo',
+      $builder->produce('connection_page_info')
+        ->map('connection', $builder->fromParent())
+    );
+
+    // Edge fields.
+    $registry->addFieldResolver(
+      $type . 'Edge',
+      'cursor',
+      $builder->produce('edge_cursor')
+        ->map('edge', $builder->fromParent())
+    );
+    $registry->addFieldResolver(
+      $type . 'Edge',
+      'node',
+      $builder->produce('edge_node')
+        ->map('edge', $builder->fromParent())
     );
   }
 }

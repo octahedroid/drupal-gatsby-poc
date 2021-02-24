@@ -19,7 +19,7 @@ class Edge implements EdgeInterface
    * 
    * @var string
    */
-  protected string $cursor;
+  protected $cursor;
 
   /**
    * @param mixed $node

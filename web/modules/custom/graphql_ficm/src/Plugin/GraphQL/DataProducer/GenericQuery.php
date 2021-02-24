@@ -8,6 +8,7 @@ use Drupal\graphql\Plugin\GraphQL\DataProducer\DataProducerPluginBase;
 use Drupal\graphql_ficm_core\Wrappers\EntityConnection;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use GraphQL\Error\UserError;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -22,6 +23,10 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   consumes = {
  *     "type" = @ContextDefinition("string",
  *       label = @Translation("Entity type"),
+ *     ),
+ *     "bundle" = @ContextDefinition("string",
+ *       label = @Translation("Bundle type"),
+ *       required = FALSE
  *     ),
  *     "limit" = @ContextDefinition("integer",
  *       label = @Translation("The amount of entries to fetch"),
@@ -65,6 +70,8 @@ class GenericQuery extends DataProducerPluginBase implements ContainerFactoryPlu
    *
    * @param string $type
    *   The entity type
+   * @param string $bundle
+   *   The bundle type
    * @param int $limit
    *   Fetch the first X results.
    * @param string|null $from
@@ -78,15 +85,13 @@ class GenericQuery extends DataProducerPluginBase implements ContainerFactoryPlu
    * @param \Drupal\Core\Cache\RefinableCacheableDependencyInterface $metadata
    *   Cacheability metadata for this request.
    *
-   * @return \Drupal\social_graphql\GraphQL\ConnectionInterface
+   * @return \Drupal\graphql_ficm_core\Wrappers\ConnectionInterface
    *   An entity connection with results and data about the paginated results.
-   *
-   * @todo https://www.drupal.org/project/social/issues/3191622
-   * @todo https://www.drupal.org/project/social/issues/3191637
    */
-  public function resolve(string $type, int $limit, ?string $from, bool $reverseSort, bool $reverseDirection, string $sortKey, RefinableCacheableDependencyInterface $metadata)
+  public function resolve(string $type, string $bundle, int $limit, ?string $from, bool $reverseSort, bool $reverseDirection, string $sortKey, RefinableCacheableDependencyInterface $metadata)
   {
     $queryHelper = new QueryHelper($this->entityTypeManager, $type, $sortKey);
+
     $metadata->addCacheableDependency($queryHelper);
 
     $connection = new EntityConnection($queryHelper);

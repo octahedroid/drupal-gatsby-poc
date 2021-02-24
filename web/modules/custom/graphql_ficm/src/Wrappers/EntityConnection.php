@@ -209,30 +209,30 @@ class EntityConnection implements ConnectionInterface
         );
       }
 
-      // Set up the final query
       $query->condition($paginationCondition);
-      $query->range(0, $limit + 1);
-      $query->sort($sortField, $queryOrder);
-      // To ensure a consistent sorting for duplicate fields we add a secondary
-      // sort based on the ID.
-      if ($sortField !== $idField) {
-        $query->sort(
-          $idField,
-          $queryOrder
-        );
-      }
-
-      // Fetch results
-      $result = $query->execute();
-
-      // Due to the way the SQL query is built, we have to compensate the order
-      // of the results if we set reverseDirection to true
-      if ($this->reverseDirection) {
-        $result = array_reverse($result);
-      }
-
-      return $this->queryHelper->getLoaderPromise($result);
     }
+
+
+    $query->range(0, $limit + 1);
+    $query->sort($sortField, $queryOrder);
+    // To ensure a consistent sorting for duplicate fields we add a secondary
+    // sort based on the ID.
+    if ($sortField !== $idField) {
+      $query->sort(
+        $idField,
+        $queryOrder
+      );
+    }
+
+    // Fetch results
+    $result = $query->execute();
+
+    // Due to the way the SQL query is built, we have to compensate the order
+    // of the results if we set reverseDirection to true
+    if ($this->reverseDirection) {
+      $result = array_reverse($result);
+    }
+    return $this->queryHelper->getLoaderPromise($result);
   }
 
   /**

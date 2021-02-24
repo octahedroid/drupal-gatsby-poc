@@ -113,7 +113,7 @@ class QueryHelper
     //Use buffer if there are results
     if (!empty($result)) {
       $buffer = \Drupal::service('graphql.buffer.entity');
-      $callback = $buffer->add('user', array_values($result));
+      $callback = $buffer->add($this->internalType, array_values($result));
     }
 
     return new Deferred(

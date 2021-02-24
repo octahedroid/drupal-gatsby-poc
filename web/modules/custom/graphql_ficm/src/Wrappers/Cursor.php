@@ -16,21 +16,21 @@ class Cursor
    * 
    * @var string
    */
-  protected string $internalType;
+  protected $internalType;
 
   /**
    * Drupal's entity ID
    * 
    * @var int
    */
-  protected int $internalID;
+  protected $internalID;
 
   /**
    * The field that was used for the sorting
    * 
    * @var string
    */
-  protected string $sortKey;
+  protected $sortKey;
 
   /**
    * The value of the sort field
