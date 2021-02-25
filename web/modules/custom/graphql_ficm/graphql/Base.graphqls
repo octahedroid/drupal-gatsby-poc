@@ -25,6 +25,7 @@ type PageInfo {
   hasPreviousPage: Boolean!
   startCursor: Cursor
   endCursor: Cursor
+  count: Int!
 }
 
 interface Connection {
@@ -44,10 +45,33 @@ type ArticleEdge implements Edge {
   node: Article!
 }
 
+type PageConnection implements Connection {
+  edges: [PageEdge!]!
+  nodes: [Page!]!
+  pageInfo: PageInfo!
+}
+
+type PageEdge implements Edge {
+  cursor: Cursor!
+  node: Page!
+}
+
 type Query {
   article(id: Int!): Article
-  articles(offset: Int = 0, limit: Int = 10): ArticleConnection!
-  pages(offset: Int = 0, limit: Int = 10): PageConnection!
+  articles(
+    limit: Int
+    from: Cursor
+    reverseSort: Boolean = false
+    reverseDirection: Boolean = false
+    sortKey: String
+  ): ArticleConnection!
+  pages(
+    limit: Int
+    from: Cursor
+    reverseSort: Boolean = false
+    reverseDirection: Boolean = false
+    sortKey: String
+  ): PageConnection!
   page(id: Int!): Page
   nodes(
     limit: Int
@@ -77,11 +101,6 @@ type Page implements Node {
   id: Int!
   title: String
   content: [Paragraph!]
-}
-
-type PageConnection {
-  total: Int!
-  items: [Page!]
 }
 
 type LibraryItem {

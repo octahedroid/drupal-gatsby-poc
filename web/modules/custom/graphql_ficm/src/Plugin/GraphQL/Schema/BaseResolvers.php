@@ -245,15 +245,20 @@ class BaseResolvers extends SdlSchemaPluginBase
         ->map('reverseDirection', $builder->fromArgument('reverseDirection'))
         ->map('sortKey', $builder->fromArgument('sortKey'))
         ->map('type', $builder->fromValue('node'))
+        ->map('bundle', $builder->fromValue('node'))
     );
 
     $registry->addFieldResolver(
       'Query',
       'pages',
-      $builder->produce('query_base')
-        ->map('offset', $builder->fromArgument('offset'))
-        ->map('type', $builder->fromValue('page'))
+      $builder->produce('generic_query')
         ->map('limit', $builder->fromArgument('limit'))
+        ->map('from', $builder->fromArgument('from'))
+        ->map('reverseSort', $builder->fromArgument('reverseSort'))
+        ->map('reverseDirection', $builder->fromArgument('reverseDirection'))
+        ->map('sortKey', $builder->fromArgument('sortKey'))
+        ->map('type', $builder->fromValue('node'))
+        ->map('bundle', $builder->fromValue('page'))
     );
 
     $registry->addFieldResolver(
@@ -266,6 +271,7 @@ class BaseResolvers extends SdlSchemaPluginBase
         ->map('reverseDirection', $builder->fromArgument('reverseDirection'))
         ->map('sortKey', $builder->fromArgument('sortKey'))
         ->map('type', $builder->fromValue('node'))
+        ->map('bundle', $builder->fromValue('article'))
     );
   }
 

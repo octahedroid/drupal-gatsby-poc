@@ -8,7 +8,6 @@ use Drupal\graphql\Plugin\GraphQL\DataProducer\DataProducerPluginBase;
 use Drupal\graphql_ficm_core\Wrappers\EntityConnection;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use GraphQL\Error\UserError;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -88,9 +87,9 @@ class GenericQuery extends DataProducerPluginBase implements ContainerFactoryPlu
    * @return \Drupal\graphql_ficm_core\Wrappers\ConnectionInterface
    *   An entity connection with results and data about the paginated results.
    */
-  public function resolve(string $type, string $bundle, int $limit, ?string $from, bool $reverseSort, bool $reverseDirection, string $sortKey, RefinableCacheableDependencyInterface $metadata)
+  public function resolve(string $type, ?string $bundle, int $limit, ?string $from, bool $reverseSort, bool $reverseDirection, string $sortKey, RefinableCacheableDependencyInterface $metadata)
   {
-    $queryHelper = new QueryHelper($this->entityTypeManager, $type, $sortKey);
+    $queryHelper = new QueryHelper($this->entityTypeManager, $type, $bundle, $sortKey);
 
     $metadata->addCacheableDependency($queryHelper);
 

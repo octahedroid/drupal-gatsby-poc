@@ -90,14 +90,19 @@ class EntityConnection implements ConnectionInterface
           'hasPreviousPage' => FALSE,
           'startCursor' => NULL,
           'endCursor' => NULL,
+          'count' => 0,
         ];
       }
 
+      $count = count($edges);
+      $lastIndex = min($count, $this->limit) - 1;
+
       return [
-        'hasNextPage' => TRUE,
-        'hasPreviousPage' => TRUE,
-        'startCursor' => NULL,
-        'endCursor' => NULL,
+        'hasNextPage' => $count >  $this->limit,
+        'hasPreviousPage' => isset($this->from),
+        'startCursor' => $edges[0]->getCursor(),
+        'endCursor' => $edges[$lastIndex]->getCursor(),
+        'count' => $count,
       ];
     });
   }
@@ -174,15 +179,17 @@ class EntityConnection implements ConnectionInterface
     $idField = $this->queryHelper->getIdField();
     $limit = $this->limit;
 
-    // Since we can not only reverse the direction of the sort (e.g. sort posts by oldest or newest first),
-    // but also reverse the direction of the post to fetch starting from the cursor (e.g. from the cursor, the
-    // previous or next N posts), we have to set this the direction of the query based on these conditions
 
-    $queryOrder = $this->reverseDirection xor $this->reverseSort ? "DESC" : "ASC";
+    $queryOrder = $this->reverseSort ? "DESC" : "ASC";
 
     // Logic handling the conditions based on a the optional cursor provided
     $cursor = $this->from;
     if (!is_null($cursor)) {
+      // Since we can not only reverse the direction of the sort (e.g. sort posts by oldest or newest first),
+      // but also reverse the direction of the post to fetch starting from the cursor (e.g. from the cursor, the
+      // previous or next N posts), we have to set this the direction of the query based on these conditions
+      $queryOrder = ($this->reverseDirection xor $this->reverseSort) ? "DESC" : "ASC";
+
       $cursorObject = $this->queryHelper->getCursorObject($cursor);
       if (is_null($cursorObject)) {
         throw new UserError("invalid cursor '${$cursor}'");
@@ -192,7 +199,7 @@ class EntityConnection implements ConnectionInterface
 
       // Due to same reasons as the $queryOrder variable, the operator que have to use for the 
       // id field
-      $conditionOperator = $this->reverseDirection xor $this->reverseSort ? '<' : ">";
+      $conditionOperator = ($this->reverseDirection xor $this->reverseSort) ? '<' : ">";
 
       $cursorValue = $cursorObject->getSortKeyValue();
 

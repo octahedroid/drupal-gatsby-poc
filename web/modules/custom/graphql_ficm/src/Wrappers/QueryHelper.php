@@ -38,6 +38,13 @@ class QueryHelper
   protected $internalType;
 
   /**
+   * The bundle type 
+   * 
+   * @var string
+   */
+  protected $bundleType;
+
+  /**
    * TODO: better code
    */
   protected const IDMAP = array("user" => "uid", "node" => "nid", "taxonomy" => "tid");
@@ -57,11 +64,12 @@ class QueryHelper
   }
 
 
-  public function __construct(EntityTypeManagerInterface $entityTypeManager, string $internalType, string $sortKey)
+  public function __construct(EntityTypeManagerInterface $entityTypeManager, string $internalType, ?string $bundleType, string $sortKey)
   {
     $this->entityTypeManager = $entityTypeManager;
     $this->internalType = $internalType;
     $this->sortKey = $sortKey;
+    $this->bundleType = $bundleType;
   }
 
   /**
@@ -72,14 +80,19 @@ class QueryHelper
    */
   public function getQuery(): QueryInterface
   {
-    $query = $this->entityTypeManager
-      ->getStorage($this->internalType)
-      ->getQuery()
+    $storage = $this->entityTypeManager
+      ->getStorage($this->internalType);
+
+    $query = $storage->getQuery()
       ->currentRevision()
       ->accessCheck();
 
     if ($this->internalType === 'user') {
       $query->condition('uid', 0, '!='); //anonymous user
+    }
+
+    if (isset($this->bundleType)) {
+      $query->condition($storage->getEntityType()->getKey('bundle'), $this->bundleType);
     }
 
     return $query;
